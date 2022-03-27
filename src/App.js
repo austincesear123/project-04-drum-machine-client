@@ -44,11 +44,15 @@ function App() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [clock, setClock] = useState(0);
   const [seq, setSeq] = useState(defaultSeq);
+  const [partContainer, setPartContainer] = useState({});
 
   Tone.Transport.bpm.value = 140;
+  Tone.Transport.loop = true;
+  Tone.Transport.setLoopPoints(0, "1m");
 
   useEffect(() => {
-   return new Tone.Part((time, value) => {
+    console.log("part created");
+    const part = new Tone.Part((time, value) => {
       console.log(time);
       let currentBeat = Tone.Transport.position
         .split(":")
@@ -57,21 +61,27 @@ function App() {
       handleClock(currentBeat);
       bassSynth.triggerAttackRelease(value.note, "8n", time, value.velocity);
     }, seq).start();
-  }, [seq]);
+    setPartContainer(part);
+  }, []);
+
+  // useEffect(() => {
+  //   console.log("part updated")
+  //   const updatedPart = partContainer;
+  //   updatedPart.value = seq;
+  //   setPartContainer(updatedPart)
+  // }, [seq])
 
   function runClock() {
     if (!isPlaying) {
-      setSeq(defaultSeq)
-      setIsPlaying(true);
-      Tone.Transport.loop = true;
-      Tone.Transport.setLoopPoints(0, "1m");
       Tone.Transport.start();
+
+      setIsPlaying(true);
     }
   }
 
   function stopClock() {
     Tone.Transport.stop();
-    
+
     setIsPlaying(false);
     setClock(0);
   }
@@ -93,6 +103,27 @@ function App() {
     }
   }
 
+  function toggleActiveStep(index) {
+    partContainer.dispose();
+    console.log(`${index} clicked`);
+    const updatedSeq = [...seq];
+    if (updatedSeq[index].velocity === 0) {
+      updatedSeq[index] = { ...updatedSeq[index], velocity: 1 };
+    } else if (updatedSeq[index].velocity === 1) {
+      updatedSeq[index] = { ...updatedSeq[index], velocity: 0 };
+    }
+    setSeq(updatedSeq);
+    new Tone.Part((time, value) => {
+      console.log(time);
+      let currentBeat = Tone.Transport.position
+        .split(":")
+        .map((i) => parseInt(i));
+      console.log(currentBeat);
+      handleClock(currentBeat);
+      bassSynth.triggerAttackRelease(value.note, "8n", time, value.velocity);
+    }, updatedSeq).start("0:0:0");
+  }
+
   const note = [];
   for (let i = 0; i < 16; i++) {
     note.push(
@@ -105,6 +136,7 @@ function App() {
             ? "note green"
             : "note"
         }
+        onClick={() => toggleActiveStep(i)}
       >
         {i + 1}
       </div>
