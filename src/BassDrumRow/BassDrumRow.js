@@ -23,7 +23,7 @@ const defaultSeq = [
 ];
 
 const BassDrumRow = ({ clock, setClock }) => {
-  const [seq, setSeq] = useState(defaultSeq);
+  const [bassSeq, setBassSeq] = useState(defaultSeq);
   const [partContainer, setPartContainer] = useState({});
 
   useEffect(() => {
@@ -36,7 +36,7 @@ const BassDrumRow = ({ clock, setClock }) => {
       console.log(currentBeat);
       handleClock(currentBeat);
       bassSynth.triggerAttackRelease(value.note, "8n", time, value.velocity);
-    }, seq).start("0:0:0");
+    }, bassSeq).start("0:0:0");
     setPartContainer(part);
   }, []);
 
@@ -60,13 +60,13 @@ const BassDrumRow = ({ clock, setClock }) => {
   function toggleActiveStep(index) {
     partContainer.dispose();
     console.log(`${index} clicked`);
-    const updatedSeq = [...seq];
-    if (updatedSeq[index].velocity === 0) {
-      updatedSeq[index] = { ...updatedSeq[index], velocity: 1 };
-    } else if (updatedSeq[index].velocity === 1) {
-      updatedSeq[index] = { ...updatedSeq[index], velocity: 0 };
+    const updatedBassSeq = [...bassSeq];
+    if (updatedBassSeq[index].velocity === 0) {
+      updatedBassSeq[index] = { ...updatedBassSeq[index], velocity: 1 };
+    } else if (updatedBassSeq[index].velocity === 1) {
+      updatedBassSeq[index] = { ...updatedBassSeq[index], velocity: 0 };
     }
-    setSeq(updatedSeq);
+    setBassSeq(updatedBassSeq);
     new Tone.Part((time, value) => {
       console.log(time);
       let currentBeat = Tone.Transport.position
@@ -75,20 +75,20 @@ const BassDrumRow = ({ clock, setClock }) => {
       console.log(currentBeat);
       handleClock(currentBeat);
       bassSynth.triggerAttackRelease(value.note, "8n", time, value.velocity);
-    }, updatedSeq).start("0:0:0");
+    }, updatedBassSeq).start("0:0:0");
   }
 
-  const note = [];
+  const bassNote = [];
   for (let i = 0; i < 16; i++) {
-    note.push(
+    bassNote.push(
       <div
         key={i}
         className={
           clock === i + 1
-            ? "note red"
-            : seq[i].velocity === 1
-            ? "note green"
-            : "note"
+            ? "bass-note bass-red"
+            : bassSeq[i].velocity === 1
+            ? "bass-note bass-green"
+            : "bass-note"
         }
         onClick={() => toggleActiveStep(i)}
       >
@@ -97,7 +97,7 @@ const BassDrumRow = ({ clock, setClock }) => {
     );
   }
 
-  return <div className="track">{note}</div>;
+  return <div className="bass-track">{bassNote}</div>;
 };
 
 export default BassDrumRow;
