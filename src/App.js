@@ -2,6 +2,7 @@ import "./App.css";
 import * as Tone from "tone";
 import { useEffect, useState } from "react";
 import BassDrumRow from "./BassDrumRow/BassDrumRow";
+import SnareDrumRow from "./SnareDrumRow/SnareDrumRow";
 
 const blankSeq = [
   { time: "0:0:0", note: "C1", velocity: 0 },
@@ -52,6 +53,7 @@ function App() {
       <button onClick={stopClock}>Stop</button>
       <div>Clock:{clock}</div>
       <BassDrumRow clock={clock} setClock={setClock} />
+      <SnareDrumRow clock={clock} />
     </div>
   );
 }
