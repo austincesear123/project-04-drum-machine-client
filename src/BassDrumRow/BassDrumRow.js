@@ -24,11 +24,11 @@ const defaultSeq = [
 
 const BassDrumRow = ({ clock, setClock }) => {
   const [bassSeq, setBassSeq] = useState(defaultSeq);
-  const [partContainer, setPartContainer] = useState({});
+  const [bassPartContainer, setBassPartContainer] = useState({});
 
   useEffect(() => {
     console.log("part created");
-    const part = new Tone.Part((time, value) => {
+    const bassPart = new Tone.Part((time, value) => {
       console.log(time);
       let currentBeat = Tone.Transport.position
         .split(":")
@@ -37,7 +37,7 @@ const BassDrumRow = ({ clock, setClock }) => {
       handleClock(currentBeat);
       bassSynth.triggerAttackRelease(value.note, "8n", time, value.velocity);
     }, bassSeq).start("0:0:0");
-    setPartContainer(part);
+    setBassPartContainer(bassPart);
   }, []);
 
   function handleClock(beat) {
@@ -58,7 +58,7 @@ const BassDrumRow = ({ clock, setClock }) => {
   }
 
   function toggleActiveStep(index) {
-    partContainer.dispose();
+    bassPartContainer.dispose();
     console.log(`${index} clicked`);
     const updatedBassSeq = [...bassSeq];
     if (updatedBassSeq[index].velocity === 0) {
@@ -67,7 +67,7 @@ const BassDrumRow = ({ clock, setClock }) => {
       updatedBassSeq[index] = { ...updatedBassSeq[index], velocity: 0 };
     }
     setBassSeq(updatedBassSeq);
-    new Tone.Part((time, value) => {
+    const updatedBassPart = new Tone.Part((time, value) => {
       console.log(time);
       let currentBeat = Tone.Transport.position
         .split(":")
@@ -76,6 +76,7 @@ const BassDrumRow = ({ clock, setClock }) => {
       handleClock(currentBeat);
       bassSynth.triggerAttackRelease(value.note, "8n", time, value.velocity);
     }, updatedBassSeq).start("0:0:0");
+    setBassPartContainer(updatedBassPart)
   }
 
   const bassNote = [];
