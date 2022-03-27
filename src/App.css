@@ -2,7 +2,7 @@
   text-align: center;
 }
 
-.track {
+/* .track {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -12,6 +12,7 @@
   border: 1px solid black;
   height: 100px;
   width: 100px;
+  cursor: pointer;
 }
 
 .red {
@@ -20,4 +21,4 @@
 
 .green {
   background-color: green;
-}
+} */
