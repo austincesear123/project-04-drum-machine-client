@@ -3,120 +3,109 @@ import * as Tone from "tone";
 import { useEffect, useState } from "react";
 
 const bassSynth = new Tone.MembraneSynth().toDestination();
-// const loopBeat = new Tone.Loop();
-// const part = new Tone.Part((time, value) => {
-//   bassSynth.triggerAttackRelease(value.note, "8n", time, value.velocity);
-// }, [
-//   {time: "0:0", note: "C1", velocity: 1},
-//   {time: "0:1", note: "C1", velocity: 0},
-//   {time: "0:2", note: "C1", velocity: 1},
-//   {time: "0:3", note: "C1", velocity: 0},
-//   {time: "1:0", note: "C1", velocity: 1},
-//   {time: "1:1", note: "C1", velocity: 0},
-//   {time: "1:2", note: "C1", velocity: 1},
-//   {time: "1:3", note: "C1", velocity: 0},
-//   {time: "2:0", note: "C1", velocity: 1},
-//   {time: "2:1", note: "C1", velocity: 0},
-//   {time: "2:2", note: "C1", velocity: 1},
-//   {time: "2:3", note: "C1", velocity: 0},
-//   {time: "3:0", note: "C1", velocity: 1},
-//   {time: "3:1", note: "C1", velocity: 0},
-//   {time: "3:2", note: "C1", velocity: 1},
-//   {time: "3:3", note: "C1", velocity: 0}
-// ]).start(0);
+const blankSeq = [
+  { time: "0:0:0", note: "C1", velocity: 0 },
+  { time: "0:0:1", note: "C1", velocity: 0 },
+  { time: "0:0:2", note: "C1", velocity: 0 },
+  { time: "0:0:3", note: "C1", velocity: 0 },
+  { time: "0:1:0", note: "C1", velocity: 0 },
+  { time: "0:1:1", note: "C1", velocity: 0 },
+  { time: "0:1:2", note: "C1", velocity: 0 },
+  { time: "0:1:3", note: "C1", velocity: 0 },
+  { time: "0:2:0", note: "C1", velocity: 0 },
+  { time: "0:2:1", note: "C1", velocity: 0 },
+  { time: "0:2:2", note: "C1", velocity: 0 },
+  { time: "0:2:3", note: "C1", velocity: 0 },
+  { time: "0:3:0", note: "C1", velocity: 0 },
+  { time: "0:3:1", note: "C1", velocity: 0 },
+  { time: "0:3:2", note: "C1", velocity: 0 },
+  { time: "0:3:3", note: "C1", velocity: 0 },
+];
+const defaultSeq = [
+  { time: "0:0:0", note: "C1", velocity: 1 },
+  { time: "0:0:1", note: "C1", velocity: 0 },
+  { time: "0:0:2", note: "C1", velocity: 0 },
+  { time: "0:0:3", note: "C1", velocity: 0 },
+  { time: "0:1:0", note: "C1", velocity: 1 },
+  { time: "0:1:1", note: "C1", velocity: 0 },
+  { time: "0:1:2", note: "C1", velocity: 0 },
+  { time: "0:1:3", note: "C1", velocity: 0 },
+  { time: "0:2:0", note: "C1", velocity: 1 },
+  { time: "0:2:1", note: "C1", velocity: 0 },
+  { time: "0:2:2", note: "C1", velocity: 0 },
+  { time: "0:2:3", note: "C1", velocity: 0 },
+  { time: "0:3:0", note: "C1", velocity: 1 },
+  { time: "0:3:1", note: "C1", velocity: 0 },
+  { time: "0:3:2", note: "C1", velocity: 0 },
+  { time: "0:3:3", note: "C1", velocity: 0 },
+];
 
 function App() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [clock, setClock] = useState(0);
-  const [seq, setSeq] = useState([
-    { time: "0:0", note: "C1", velocity: 1 },
-    { time: "0:1", note: "C1", velocity: 0 },
-    { time: "0:2", note: "C1", velocity: 1 },
-    { time: "0:3", note: "C1", velocity: 0 },
-    { time: "1:0", note: "C1", velocity: 1 },
-    { time: "1:1", note: "C1", velocity: 0 },
-    { time: "1:2", note: "C1", velocity: 1 },
-    { time: "1:3", note: "C1", velocity: 0 },
-    { time: "2:0", note: "C1", velocity: 1 },
-    { time: "2:1", note: "C1", velocity: 0 },
-    { time: "2:2", note: "C1", velocity: 1 },
-    { time: "2:3", note: "C1", velocity: 0 },
-    { time: "3:0", note: "C1", velocity: 1 },
-    { time: "3:1", note: "C1", velocity: 0 },
-    { time: "3:2", note: "C1", velocity: 1 },
-    { time: "3:3", note: "C1", velocity: 0 },
-  ]);
+  const [seq, setSeq] = useState(defaultSeq);
 
-  Tone.Transport.bpm.value = 280;
-
-  // let clock = '';
-  // let event_id = Tone.Transport.scheduleRepeat((time) => {
-  //   console.log(time)
-  //   let currentBeat = Tone.Transport.position.split(":");
-  //   setClock(parseInt(currentBeat[1]));
-  // }, "4n");
+  Tone.Transport.bpm.value = 140;
 
   useEffect(() => {
-    return new Tone.Part((time, value) => {
+   return new Tone.Part((time, value) => {
       console.log(time);
+      let currentBeat = Tone.Transport.position
+        .split(":")
+        .map((i) => parseInt(i));
+      console.log(currentBeat);
+      handleClock(currentBeat);
       bassSynth.triggerAttackRelease(value.note, "8n", time, value.velocity);
-    }, seq).start(0);
-  }, []);
+    }, seq).start();
+  }, [seq]);
 
   function runClock() {
     if (!isPlaying) {
-      // loopBeat.set({
-      //   callback: song,
-      //   interval: "4n",
-      // });
-      // loopBeat.start();
+      setSeq(defaultSeq)
       setIsPlaying(true);
       Tone.Transport.loop = true;
-      Tone.Transport.setLoopPoints(0, "4m");
+      Tone.Transport.setLoopPoints(0, "1m");
       Tone.Transport.start();
     }
   }
 
   function stopClock() {
+    Tone.Transport.stop();
+    
     setIsPlaying(false);
     setClock(0);
-    // loopBeat.dispose();
-    Tone.Transport.loop = false;
-    Tone.Transport.setLoopPoints(0);
-    Tone.Transport.stop();
   }
-
-  // function song(time) {
-  //   console.log(time);
-  //   let currentBeat = Tone.Transport.position
-  //     .split(":")
-  //     .map((i) => parseInt(i));
-  //   console.log(currentBeat);
-  //   handleClock(currentBeat);
-  //   if (currentBeat[1] === 0 || currentBeat[1] === 2) {
-  //     bassSynth.triggerAttackRelease("C1", "8n", time);
-  //   }
-  // }
 
   function handleClock(beat) {
-    let beatArr = [parseInt(beat[0]) + 1, parseInt(beat[1]) + 1];
-    if (beatArr[0] === 1) {
-      setClock(beatArr[1]);
-    } else if (beatArr[0] === 2) {
-      setClock(beatArr[1] + 4);
-    } else if (beatArr[0] === 3) {
-      setClock(beatArr[1] + 8);
-    } else if (beatArr[0] === 4) {
-      setClock(beatArr[1] + 12);
+    let beatArr = [
+      parseInt(beat[0]) + 1,
+      parseInt(beat[1]) + 1,
+      parseInt(beat[2]) + 1,
+    ];
+    if (beatArr[1] === 1) {
+      setClock(beatArr[2]);
+    } else if (beatArr[1] === 2) {
+      setClock(beatArr[2] + 4);
+    } else if (beatArr[1] === 3) {
+      setClock(beatArr[2] + 8);
+    } else if (beatArr[1] === 4) {
+      setClock(beatArr[2] + 12);
     }
   }
-
-  // function handleClick()
 
   const note = [];
   for (let i = 0; i < 16; i++) {
     note.push(
-      <div key={i} className={clock === i + 1 ? "note red" : "note"}>
+      <div
+        key={i}
+        className={
+          clock === i + 1
+            ? "note red"
+            : seq[i].velocity === 1
+            ? "note green"
+            : "note"
+        }
+      >
         {i + 1}
       </div>
     );
