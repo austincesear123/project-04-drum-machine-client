@@ -28,7 +28,6 @@ const BassDrumRow = ({ clock, setClock }) => {
 
   useEffect(() => {
     const bassPart = new Tone.Part((time, value) => {
-      console.log(time);
       let currentBeat = Tone.Transport.position
         .split(":")
         .map((i) => parseInt(i));
@@ -57,7 +56,6 @@ const BassDrumRow = ({ clock, setClock }) => {
 
   function toggleActiveStep(index) {
     bassPartContainer.dispose();
-    console.log(`${index} clicked`);
     const updatedBassSeq = [...bassSeq];
     if (updatedBassSeq[index].velocity === 0) {
       updatedBassSeq[index] = { ...updatedBassSeq[index], velocity: 1 };

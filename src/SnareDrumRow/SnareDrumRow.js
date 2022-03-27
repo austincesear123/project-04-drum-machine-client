@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import * as Tone from "tone";
 
 const lowPass = new Tone.Filter({
-  frequency: 3000,
+  frequency: 8000,
   type: "lowpass",
 }).toDestination();
 
@@ -15,8 +15,8 @@ const snareSynth = new Tone.NoiseSynth({
   },
   envelope: {
     attack: 0.001,
-    decay: 0.2,
-    sustain: 0.15,
+    decay: 0.10,
+    sustain: 0.05,
     release: 0.03,
   },
 }).connect(lowPass);
@@ -51,6 +51,21 @@ const SnareDrumRow = ({ clock }) => {
     setSnarePartContainer(snarePart);
   }, []);
 
+  function toggleActiveStep(index) {
+    snarePartContainer.dispose();
+    const updatedSnareSeq = [...snareSeq];
+    if (updatedSnareSeq[index].velocity === 0) {
+      updatedSnareSeq[index] = { ...updatedSnareSeq[index], velocity: 1 };
+    } else if (updatedSnareSeq[index].velocity === 1) {
+      updatedSnareSeq[index] = { ...updatedSnareSeq[index], velocity: 0 };
+    }
+    setSnareSeq(updatedSnareSeq);
+    const updatedSnarePart = new Tone.Part((time, value) => {
+      snareSynth.triggerAttackRelease("8n", time, value.velocity);
+    }, updatedSnareSeq).start("0:0:0");
+    setSnarePartContainer(updatedSnarePart)
+  }
+
   const snareNote = [];
   for (let i = 0; i < 16; i++) {
     snareNote.push(
@@ -63,7 +78,7 @@ const SnareDrumRow = ({ clock }) => {
             ? "snare-note snare-green"
             : "snare-note"
         }
-        // onClick={() => toggleActiveStep(i)}
+        onClick={() => toggleActiveStep(i)}
       >
         {i + 1}
       </div>
