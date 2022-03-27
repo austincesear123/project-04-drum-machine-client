@@ -27,13 +27,11 @@ const BassDrumRow = ({ clock, setClock }) => {
   const [bassPartContainer, setBassPartContainer] = useState({});
 
   useEffect(() => {
-    console.log("part created");
     const bassPart = new Tone.Part((time, value) => {
       console.log(time);
       let currentBeat = Tone.Transport.position
         .split(":")
         .map((i) => parseInt(i));
-      console.log(currentBeat);
       handleClock(currentBeat);
       bassSynth.triggerAttackRelease(value.note, "8n", time, value.velocity);
     }, bassSeq).start("0:0:0");
