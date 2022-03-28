@@ -4,25 +4,6 @@ import { useEffect, useState } from "react";
 import BassDrumRow from "./BassDrumRow/BassDrumRow";
 import SnareDrumRow from "./SnareDrumRow/SnareDrumRow";
 
-const blankSeq = [
-  { time: "0:0:0", note: "C1", velocity: 0 },
-  { time: "0:0:1", note: "C1", velocity: 0 },
-  { time: "0:0:2", note: "C1", velocity: 0 },
-  { time: "0:0:3", note: "C1", velocity: 0 },
-  { time: "0:1:0", note: "C1", velocity: 0 },
-  { time: "0:1:1", note: "C1", velocity: 0 },
-  { time: "0:1:2", note: "C1", velocity: 0 },
-  { time: "0:1:3", note: "C1", velocity: 0 },
-  { time: "0:2:0", note: "C1", velocity: 0 },
-  { time: "0:2:1", note: "C1", velocity: 0 },
-  { time: "0:2:2", note: "C1", velocity: 0 },
-  { time: "0:2:3", note: "C1", velocity: 0 },
-  { time: "0:3:0", note: "C1", velocity: 0 },
-  { time: "0:3:1", note: "C1", velocity: 0 },
-  { time: "0:3:2", note: "C1", velocity: 0 },
-  { time: "0:3:3", note: "C1", velocity: 0 },
-];
-
 function App() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [clock, setClock] = useState(0);
@@ -30,6 +11,15 @@ function App() {
   Tone.Transport.bpm.value = 140;
   Tone.Transport.loop = true;
   Tone.Transport.setLoopPoints(0, "1m");
+
+  useEffect(() => {
+    return new Tone.Loop(() => {
+      let currentBeat = Tone.Transport.position
+        .split(":")
+        .map((i) => parseInt(i));
+      handleClock(currentBeat);
+    }, "16n").start(0);
+  });
 
   function runClock() {
     if (!isPlaying) {
@@ -44,6 +34,23 @@ function App() {
 
     setIsPlaying(false);
     setClock(0);
+  }
+
+  function handleClock(beat) {
+    let beatArr = [
+      parseInt(beat[0]) + 1,
+      parseInt(beat[1]) + 1,
+      parseInt(beat[2]) + 1,
+    ];
+    if (beatArr[1] === 1) {
+      setClock(beatArr[2]);
+    } else if (beatArr[1] === 2) {
+      setClock(beatArr[2] + 4);
+    } else if (beatArr[1] === 3) {
+      setClock(beatArr[2] + 8);
+    } else if (beatArr[1] === 4) {
+      setClock(beatArr[2] + 12);
+    }
   }
 
   return (

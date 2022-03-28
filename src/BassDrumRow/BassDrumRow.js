@@ -51,38 +51,17 @@ const defaultStepChecked = [
   false,
 ];
 
-const BassDrumRow = ({ clock, setClock }) => {
+const BassDrumRow = ({ clock }) => {
   const [bassSeq, setBassSeq] = useState(defaultSeq);
   const [bassPartContainer, setBassPartContainer] = useState({});
   const [bassStepChecked, setBassStepChecked] = useState(defaultStepChecked);
 
   useEffect(() => {
     const bassPart = new Tone.Part((time, value) => {
-      let currentBeat = Tone.Transport.position
-        .split(":")
-        .map((i) => parseInt(i));
-      handleClock(currentBeat);
       bassSynth.triggerAttackRelease(value.note, "16n", time, value.velocity);
     }, bassSeq).start("0:0:0");
     setBassPartContainer(bassPart);
   }, []);
-
-  function handleClock(beat) {
-    let beatArr = [
-      parseInt(beat[0]) + 1,
-      parseInt(beat[1]) + 1,
-      parseInt(beat[2]) + 1,
-    ];
-    if (beatArr[1] === 1) {
-      setClock(beatArr[2]);
-    } else if (beatArr[1] === 2) {
-      setClock(beatArr[2] + 4);
-    } else if (beatArr[1] === 3) {
-      setClock(beatArr[2] + 8);
-    } else if (beatArr[1] === 4) {
-      setClock(beatArr[2] + 12);
-    }
-  }
 
   function toggleActiveStep(index) {
     bassPartContainer.dispose();
@@ -121,16 +100,7 @@ const BassDrumRow = ({ clock, setClock }) => {
       }
     }
 
-    // if (updatedBassSeq[index].velocity === 0) {
-    //   updatedBassSeq[index] = { ...updatedBassSeq[index], velocity: 1 };
-    // } else if (updatedBassSeq[index].velocity === 1) {
-    //   updatedBassSeq[index] = { ...updatedBassSeq[index], velocity: 0 };
-    // }
     const updatedBassPart = new Tone.Part((time, value) => {
-      let currentBeat = Tone.Transport.position
-        .split(":")
-        .map((i) => parseInt(i));
-      handleClock(currentBeat);
       bassSynth.triggerAttackRelease(value.note, "16n", time, value.velocity);
     }, updatedBassSeq).start("0:0:0");
     setBassSeq(updatedBassSeq);
