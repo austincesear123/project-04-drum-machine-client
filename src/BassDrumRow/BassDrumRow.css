@@ -6,8 +6,8 @@
 
 .bass-note {
     border: 1px solid black;
-    height: 50px;
-    width: 50px;
+    min-height: 50px;
+    min-width: 50px;
     cursor: pointer;
   }
   

@@ -127,7 +127,12 @@ const BassDrumRow = ({ clock }) => {
     );
   }
 
-  return <div className="bass-track">{bassNote}</div>;
+  return (
+    <div className="bass-track">
+      <div className="bass-note">Kick</div>
+      {bassNote}
+    </div>
+  );
 };
 
 export default BassDrumRow;

@@ -2,15 +2,15 @@ import "./SnareDrumRow.css";
 import { useEffect, useState } from "react";
 import * as Tone from "tone";
 
-const dist = new Tone.Distortion(0.05).toDestination();
+const dist = new Tone.Distortion(0.1).toDestination();
 
 const lowPass = new Tone.Filter({
-  frequency: 8000,
+  frequency: 20000,
   type: "lowpass",
 }).connect(dist);
 
 const snareSynth = new Tone.NoiseSynth({
-  volume: -12,
+  volume: -9,
   noise: {
     type: "white",
     playbackRate: 3,
@@ -120,8 +120,8 @@ const SnareDrumRow = ({ clock }) => {
       snareSynth.triggerAttackRelease("16n", time, value.velocity);
     }, updatedSnareSeq).start("0:0:0");
     setSnareSeq(updatedSnareSeq);
-    setSnarePartContainer(updatedSnarePart)
-    setSnareStepChecked(updatedSnareStepChecked)
+    setSnarePartContainer(updatedSnarePart);
+    setSnareStepChecked(updatedSnareStepChecked);
   }
 
   const snareNote = [];
@@ -143,7 +143,12 @@ const SnareDrumRow = ({ clock }) => {
     );
   }
 
-  return <div className="snare-track">{snareNote}</div>;
+  return (
+    <div className="snare-track">
+      <div className="snare-note">Snare</div>
+      {snareNote}
+    </div>
+  );
 };
 
 export default SnareDrumRow;
