@@ -250,8 +250,14 @@ const ClosedHatRow = ({ clock }) => {
   }
   return (
     <>
-      <div className="closed-hat-track">{closedHatNote}</div>
-      <div className="open-hat-track">{openHatNote}</div>
+      <div className="closed-hat-track">
+        <div className="closed-hat-note">Closed HH</div>
+        {closedHatNote}
+      </div>
+      <div className="open-hat-track">
+        <div className="open-hat-note">Open HH</div>
+        {openHatNote}
+      </div>
     </>
   );
 };

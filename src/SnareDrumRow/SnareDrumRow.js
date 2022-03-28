@@ -120,8 +120,8 @@ const SnareDrumRow = ({ clock }) => {
       snareSynth.triggerAttackRelease("16n", time, value.velocity);
     }, updatedSnareSeq).start("0:0:0");
     setSnareSeq(updatedSnareSeq);
-    setSnarePartContainer(updatedSnarePart)
-    setSnareStepChecked(updatedSnareStepChecked)
+    setSnarePartContainer(updatedSnarePart);
+    setSnareStepChecked(updatedSnareStepChecked);
   }
 
   const snareNote = [];
@@ -143,7 +143,12 @@ const SnareDrumRow = ({ clock }) => {
     );
   }
 
-  return <div className="snare-track">{snareNote}</div>;
+  return (
+    <div className="snare-track">
+      <div className="snare-note">Snare</div>
+      {snareNote}
+    </div>
+  );
 };
 
 export default SnareDrumRow;
