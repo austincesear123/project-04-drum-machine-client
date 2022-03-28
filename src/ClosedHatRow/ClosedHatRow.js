@@ -5,31 +5,31 @@ import * as Tone from "tone";
 const dist = new Tone.Distortion(0.1).toDestination();
 
 const closedHatSynth = new Tone.MetalSynth({
-    envelope: {
-        attack: 0.001,
-        decay: 0.05,
-        sustain: 0,
-        release: 0.03
-    }
+  envelope: {
+    attack: 0.001,
+    decay: 0.05,
+    sustain: 0,
+    release: 0.03,
+  },
 }).connect(dist);
 closedHatSynth.volume.value = -12;
 
 const defaultSeq = [
-  { time: "0:0:0", note: "C1", velocity: 1 },
-  { time: "0:0:1", note: "C1", velocity: 1 },
-  //   { time: "0:0:2", note: "C1", velocity: 0 },
+  { time: "0:0:0", note: "C1", velocity: 1, open: false },
+  { time: "0:0:1", note: "C1", velocity: 1, open: false },
+  { time: "0:0:2", note: "C1", velocity: 1, open: true },
   //   { time: "0:0:3", note: "C1", velocity: 0 },
-  { time: "0:1:0", note: "C1", velocity: 1 },
-  { time: "0:1:1", note: "C1", velocity: 1 },
-  //   { time: "0:1:2", note: "C1", velocity: 0 },
+  { time: "0:1:0", note: "C1", velocity: 1, open: false },
+  { time: "0:1:1", note: "C1", velocity: 1, open: false },
+  { time: "0:1:2", note: "C1", velocity: 1, open: true },
   //   { time: "0:1:3", note: "C1", velocity: 0 },
-  { time: "0:2:0", note: "C1", velocity: 1 },
-  { time: "0:2:1", note: "C1", velocity: 1 },
-  //   { time: "0:2:2", note: "C1", velocity: 0 },
+  { time: "0:2:0", note: "C1", velocity: 1, open: false },
+  { time: "0:2:1", note: "C1", velocity: 1, open: false },
+  { time: "0:2:2", note: "C1", velocity: 1, open: true },
   //   { time: "0:2:3", note: "C1", velocity: 0 },
-  { time: "0:3:0", note: "C1", velocity: 1 },
-  { time: "0:3:1", note: "C1", velocity: 1 },
-  //   { time: "0:3:2", note: "C1", velocity: 0 },
+  { time: "0:3:0", note: "C1", velocity: 1, open: false },
+  { time: "0:3:1", note: "C1", velocity: 1, open: false },
+  { time: "0:3:2", note: "C1", velocity: 1, open: true },
   //   { time: "0:3:3", note: "C1", velocity: 0 },
 ];
 
@@ -52,14 +52,40 @@ const defaultStepChecked = [
   false,
 ];
 
+const defaultStepChecked2 = [
+  false,
+  false,
+  true,
+  false,
+  false,
+  false,
+  true,
+  false,
+  false,
+  false,
+  true,
+  false,
+  false,
+  false,
+  true,
+  false,
+];
+
 const ClosedHatRow = ({ clock }) => {
   const [closedHatSeq, setClosedHatSeq] = useState(defaultSeq);
   const [closedHatPartContainer, setClosedHatPartContainer] = useState({});
   const [closedHatStepChecked, setClosedHatStepChecked] =
     useState(defaultStepChecked);
+  const [openHatStepChecked, setOpenHatStepChecked] =
+    useState(defaultStepChecked2);
 
   useEffect(() => {
     const closedHatPart = new Tone.Part((time, value) => {
+      if (value.open) {
+        closedHatSynth.envelope.decay = 0.5;
+      } else {
+        closedHatSynth.envelope.decay = 0.05;
+      }
       closedHatSynth.triggerAttackRelease(
         value.note,
         "16n",
