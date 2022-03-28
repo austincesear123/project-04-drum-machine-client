@@ -10,7 +10,7 @@ const lowPass = new Tone.Filter({
 }).connect(dist);
 
 const snareSynth = new Tone.NoiseSynth({
-  volume: -12,
+  volume: -9,
   noise: {
     type: "white",
     playbackRate: 3,
