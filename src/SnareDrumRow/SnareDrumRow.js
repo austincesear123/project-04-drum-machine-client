@@ -2,10 +2,10 @@ import "./SnareDrumRow.css";
 import { useEffect, useState } from "react";
 import * as Tone from "tone";
 
-const dist = new Tone.Distortion(0.05).toDestination();
+const dist = new Tone.Distortion(0.1).toDestination();
 
 const lowPass = new Tone.Filter({
-  frequency: 8000,
+  frequency: 20000,
   type: "lowpass",
 }).connect(dist);
 

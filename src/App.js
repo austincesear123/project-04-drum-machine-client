@@ -3,6 +3,7 @@ import * as Tone from "tone";
 import { useEffect, useState } from "react";
 import BassDrumRow from "./BassDrumRow/BassDrumRow";
 import SnareDrumRow from "./SnareDrumRow/SnareDrumRow";
+import ClosedHatRow from "./ClosedHatRow/ClosedHatRow";
 
 function App() {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -59,8 +60,9 @@ function App() {
       <button onClick={runClock}>Start</button>
       <button onClick={stopClock}>Stop</button>
       <div>Clock:{clock}</div>
-      <BassDrumRow clock={clock} setClock={setClock} />
+      <BassDrumRow clock={clock} />
       <SnareDrumRow clock={clock} />
+      <ClosedHatRow clock={clock} />
     </div>
   );
 }
