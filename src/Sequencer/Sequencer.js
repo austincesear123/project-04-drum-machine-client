@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import * as Tone from "tone";
 
 const initialPattern = [
@@ -45,11 +45,47 @@ hiHatSynth.volume.value = -6;
 const pluckSynth = new Tone.PluckSynth().toDestination();
 pluckSynth.volume.value = -6;
 
+const notes = ["A3", "C4", "D4", "E3", "G4"];
+const initialPolySynthPattern = [
+  [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0],
+  [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
+  [0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0],
+  [0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0],
+  [0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0],
+];
+
+const polySynth = new Tone.PolySynth(Tone.DuoSynth).toDestination();
+polySynth.set({
+  voice0: {
+    oscillator: {
+      type: "triangle4",
+    },
+    volume: -30,
+    envelope: {
+      attack: 0.005,
+      release: 0.05,
+      sustain: 1,
+    },
+  },
+  voice1: {
+    volume: -10,
+    envelope: {
+      attack: 0.005,
+      release: 0.05,
+      sustain: 1,
+    },
+  },
+});
+polySynth.volume.value = -10;
+
 const Sequencer = () => {
   const [clicked, setClicked] = useState(false);
   const [playState, setPlayState] = useState(Tone.Transport.state);
   const [activeColumn, setColumn] = useState(0);
   const [pattern, updatePattern] = useState(initialPattern);
+  const [polySynthPattern, setPolySynthPattern] = useState(
+    initialPolySynthPattern
+  );
 
   useEffect(
     () => {
@@ -62,14 +98,25 @@ const Sequencer = () => {
             // If active
             if (row[col] && noteIndex === 0) {
               // Play based on which row
-              return bassSynth.triggerAttackRelease("C0", "8n", time + "+0.1");
+              bassSynth.triggerAttackRelease("C0", "8n", time + "+0.1");
             } else if (row[col] && noteIndex === 1) {
-              return snareSynth.triggerAttackRelease("8n", time + "+0.1");
+              snareSynth.triggerAttackRelease("8n", time + "+0.1");
             } else if (row[col] && noteIndex === 2) {
-              return hiHatSynth.triggerAttackRelease("C1", "8n", time + "+0.1");
+              hiHatSynth.triggerAttackRelease("C1", "8n", time + "+0.1");
             } else if (row[col] && noteIndex === 3) {
-              return pluckSynth.triggerAttackRelease("C4", "8n", time + "+0.1");
+              pluckSynth.triggerAttackRelease("C4", "8n", time + "+0.1");
             }
+            return null;
+          });
+          polySynthPattern.map((row, noteIndex) => {
+            if (row[col]) {
+              polySynth.triggerAttackRelease(
+                notes[noteIndex],
+                "8n",
+                time + "0.1"
+              );
+            }
+            return null;
           });
         },
         [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
@@ -103,7 +150,6 @@ const Sequencer = () => {
       }
     }
   }
-  console.log(clicked)
 
   // Update pattern by making a copy and inverting the value
   function setPattern({ x, y, value }) {
