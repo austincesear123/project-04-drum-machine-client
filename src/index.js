@@ -4,12 +4,12 @@ import './index.css';
 import App from './App';
 import * as Tone from "tone";
 
-document.documentElement.addEventListener("mousedown", () => {
-  if (Tone.context.state !== "running") {
-    console.log("running");
-    Tone.context.resume();
-  }
-});
+// document.documentElement.addEventListener("mousedown", () => {
+//   if (Tone.context.state !== "running") {
+//     console.log("running");
+//     Tone.context.resume();
+//   }
+// });
 
 ReactDOM.render(
   <React.StrictMode>
