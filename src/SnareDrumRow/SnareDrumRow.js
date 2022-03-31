@@ -61,22 +61,30 @@ const defaultStepChecked = [
   false,
 ];
 
+const snarePart = new Tone.Part((time, value) => {
+  snareSynth.triggerAttackRelease("16n", time, value.velocity);
+}, defaultSeq);
+
 const SnareDrumRow = ({ clock }) => {
-  const [snareSeq, setSnareSeq] = useState(defaultSeq);
-  const [snarePartContainer, setSnarePartContainer] = useState({});
+  // const [snareSeq, setSnareSeq] = useState(defaultSeq);
+  // const [snarePartContainer, setSnarePartContainer] = useState({});
   const [snareStepChecked, setSnareStepChecked] = useState(defaultStepChecked);
+  const [snareRow, setSnareRow] = useState([]);
 
   useEffect(() => {
-    const snarePart = new Tone.Part((time, value) => {
-      snareSynth.triggerAttackRelease("16n", time, value.velocity);
-    }, snareSeq).start("0:0:0");
-    setSnarePartContainer(snarePart);
+    // const snarePart = new Tone.Part((time, value) => {
+    //   snareSynth.triggerAttackRelease("16n", time, value.velocity);
+    // }, defaultSeq).start("0:0:0");
+    snarePart.start("+0.1");
+    // setSnarePartContainer(snarePart);
   }, []);
 
-  function toggleActiveStep(index) {
-    snarePartContainer.dispose();
+  function toggleSnareActiveStep(index) {
+    // Tone.Transport.clear(snarePartContainer)
+    // snarePartContainer.dispose();
+    snarePart.clear();
     const updatedSnareStepChecked = [...snareStepChecked];
-    const updatedSnareSeq = [];
+    // const updatedSnareSeq = [];
 
     if (!updatedSnareStepChecked[index]) {
       updatedSnareStepChecked[index] = true;
@@ -87,21 +95,21 @@ const SnareDrumRow = ({ clock }) => {
     for (let i = 0; i < updatedSnareStepChecked.length; i++) {
       if (updatedSnareStepChecked[i]) {
         if (i < 4) {
-          updatedSnareSeq.push({ time: `0:0:${i}`, note: "C0", velocity: 1 });
+          snarePart.add({ time: `0:0:${i}`, note: "C0", velocity: 1 });
         } else if (i < 8) {
-          updatedSnareSeq.push({
+          snarePart.add({
             time: `0:1:${i - 4}`,
             note: "C0",
             velocity: 1,
           });
         } else if (i < 12) {
-          updatedSnareSeq.push({
+          snarePart.add({
             time: `0:2:${i - 8}`,
             note: "C0",
             velocity: 1,
           });
         } else if (i < 16) {
-          updatedSnareSeq.push({
+          snarePart.add({
             time: `0:3:${i - 12}`,
             note: "C0",
             velocity: 1,
@@ -116,37 +124,40 @@ const SnareDrumRow = ({ clock }) => {
     //   updatedSnareSeq[index] = { ...updatedSnareSeq[index], velocity: 0 };
     // }
 
-    const updatedSnarePart = new Tone.Part((time, value) => {
-      snareSynth.triggerAttackRelease("16n", time, value.velocity);
-    }, updatedSnareSeq).start("0:0:0");
-    setSnareSeq(updatedSnareSeq);
-    setSnarePartContainer(updatedSnarePart);
+    // const updatedSnarePart = new Tone.Part((time, value) => {
+    //   snareSynth.triggerAttackRelease("16n", time, value.velocity);
+    // }, updatedSnareSeq).start("0:0:0");
+    // setSnareSeq(updatedSnareSeq);
+    // setSnarePartContainer(updatedSnarePart);
     setSnareStepChecked(updatedSnareStepChecked);
   }
 
-  const snareNote = [];
-  for (let i = 0; i < 16; i++) {
-    snareNote.push(
-      <div
-        key={i}
-        className={
-          clock === i + 1
-            ? "snare-note snare-red"
-            : snareStepChecked[i] === true
-            ? "snare-note snare-green"
-            : "snare-note"
-        }
-        onClick={() => toggleActiveStep(i)}
-      >
-        {i + 1}
-      </div>
-    );
-  }
+  useEffect(() => {
+    const snareNote = [];
+    for (let i = 0; i < 16; i++) {
+      snareNote.push(
+        <div
+          key={i}
+          className={
+            clock === i + 1
+              ? "snare-note snare-red"
+              : snareStepChecked[i] === true
+              ? "snare-note snare-green"
+              : "snare-note"
+          }
+          onClick={() => toggleSnareActiveStep(i)}
+        >
+          {i + 1}
+        </div>
+      );
+    }
+    setSnareRow(snareNote)
+  }, [snareStepChecked]);
 
   return (
     <div className="snare-track">
       <div className="snare-note">Snare</div>
-      {snareNote}
+      {snareRow}
     </div>
   );
 };
