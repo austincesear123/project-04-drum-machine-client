@@ -5,7 +5,6 @@ import Square from "../Square/Square";
 import Visualizer from "../Visualizer/Visualizer";
 import Toolbar from "../Toolbar/Toolbar";
 import audioProps from "../audioProps";
-import { click } from "@testing-library/user-event/dist/click";
 
 const Sequencer = () => {
   const [clicked, setClicked] = useState(false);
