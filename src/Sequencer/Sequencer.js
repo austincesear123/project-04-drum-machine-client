@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import * as Tone from "tone";
 import * as d3 from "d3-random";
+import Sketch from "react-p5";
 
 const initialPattern = [
   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -82,8 +83,8 @@ polySynth.set({
   },
 });
 polySynth.volume.value = -24;
-console.log(polySynth)
-const harmonicityLFO = new Tone.LFO("1m", 0.5, 3).start()
+console.log(polySynth);
+const harmonicityLFO = new Tone.LFO("1m", 0.5, 3).start();
 
 const initialMonoSynthPattern = [
   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
@@ -281,6 +282,7 @@ const Sequencer = () => {
           ))}
         </div>
       ))}
+      <P />
     </div>
   );
 };
@@ -300,5 +302,31 @@ const Square = ({ active, value, onClick }) => (
     onClick={onClick}
   ></div>
 );
+
+let wave;
+const P = (props) => {
+  const setup = (p5, canvasParentRef) => {
+    // use parent to render the canvas in this ref
+    // (without that p5 will render the canvas outside of your component)
+    p5.createCanvas(500, 500).parent(canvasParentRef);
+    wave = new Tone.Waveform();
+    monoSynth.connect(wave);
+  };
+
+  const draw = (p5) => {
+    p5.background(0);
+    p5.stroke(255);
+    let buffer = wave.getValue(0);
+    for (let i = 0; i < buffer.length; i++) {
+      let x = p5.map(i, 0, buffer.length, 0, p5.width)
+      let y = p5.map(buffer[i], -1, 1, 0, p5.height)
+      p5.point(x, y)
+    }
+    // NOTE: Do not use setState in the draw function or in functions that are executed
+    // in the draw function...
+    // please use normal variables or class properties for these purposes
+  };
+  return <Sketch setup={setup} draw={draw} />;
+};
 
 export default Sequencer;
