@@ -22,8 +22,6 @@ const Sequencer = () => {
     () => {
       const loop = new Tone.Sequence(
         (time, col) => {
-          // Update active column for animation
-          //   setColumn(col);
           // Loop current pattern
           pattern.forEach((row, noteIndex) => {
             // If active
@@ -50,6 +48,9 @@ const Sequencer = () => {
               );
             }
           });
+          Tone.Draw.schedule(() => {
+            setColumn(col)
+          }, time + "+0.1")
         },
         [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
         "16n"
