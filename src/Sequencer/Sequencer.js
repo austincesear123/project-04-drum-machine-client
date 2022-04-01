@@ -159,7 +159,7 @@ const Sequencer = () => {
   }
 
   return (
-    <div>
+    <div className="wrapper">
       <Toolbar
         clicked={clicked}
         initialClick={initialClick}

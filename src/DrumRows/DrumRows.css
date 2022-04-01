@@ -1,0 +1,22 @@
+.drums-container {
+  display: grid;
+  grid-template-columns: 1fr, 1fr, 1fr;
+  grid-template-rows: repeat(4, 1fr);
+  align-items: center;
+}
+
+.drum-title {
+  text-align: start;
+  grid-column: 2 / 3;
+}
+
+.drum-squares {
+  grid-column: 2 / 3;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 5px;
+}
+
+.three {
+  grid-column: 3 / 4;
+}
