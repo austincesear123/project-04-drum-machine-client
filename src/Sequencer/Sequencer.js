@@ -1,5 +1,6 @@
-import React, { useCallback, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import * as Tone from "tone";
+import * as d3 from "d3-random";
 
 const initialPattern = [
   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -45,11 +46,39 @@ hiHatSynth.volume.value = -6;
 const pluckSynth = new Tone.PluckSynth().toDestination();
 pluckSynth.volume.value = -6;
 
+const notes = ["A3", "C4", "D4", "E4", "G4", "A4"];
+const initialPolySynthPattern = [
+  [1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+];
+
+const reverb = new Tone.Reverb(3).toDestination();
+reverb.wet.value = 0.5;
+const delay = new Tone.PingPongDelay("3.5n", 0.3).connect(reverb);
+delay.wet.value = 0.3;
+const polySynth = new Tone.PolySynth(Tone.DuoSynth).connect(delay);
+polySynth.set({
+  envelope: {
+    attack: 0.001,
+    decay: 1,
+    sustain: 0.1,
+    release: 0.1,
+  },
+});
+polySynth.volume.value = -24;
+
 const Sequencer = () => {
   const [clicked, setClicked] = useState(false);
   const [playState, setPlayState] = useState(Tone.Transport.state);
   const [activeColumn, setColumn] = useState(0);
   const [pattern, updatePattern] = useState(initialPattern);
+  const [polySynthPattern, setPolySynthPattern] = useState(
+    initialPolySynthPattern
+  );
 
   useEffect(
     () => {
@@ -62,14 +91,15 @@ const Sequencer = () => {
             // If active
             if (row[col] && noteIndex === 0) {
               // Play based on which row
-              return bassSynth.triggerAttackRelease("C0", "8n", time + "+0.1");
+              bassSynth.triggerAttackRelease("C0", "8n", time + "+0.1");
             } else if (row[col] && noteIndex === 1) {
-              return snareSynth.triggerAttackRelease("8n", time + "+0.1");
+              snareSynth.triggerAttackRelease("8n", time + "+0.1");
             } else if (row[col] && noteIndex === 2) {
-              return hiHatSynth.triggerAttackRelease("C1", "8n", time + "+0.1");
+              hiHatSynth.triggerAttackRelease("C1", "8n", time + "+0.1");
             } else if (row[col] && noteIndex === 3) {
-              return pluckSynth.triggerAttackRelease("C4", "8n", time + "+0.1");
+              pluckSynth.triggerAttackRelease("C4", "8n", time + "+0.1");
             }
+            return null;
           });
         },
         [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
@@ -80,8 +110,57 @@ const Sequencer = () => {
     [pattern] // Retrigger when pattern changes
   );
 
+  let tuneData = 0;
+
+  useEffect(() => {
+    Tone.Transport.scheduleRepeat(() => {
+      randomizeSequencer();
+    }, "2m");
+  }, []);
+
+  function randomizeSequencer() {
+    const psPatternCopy = [...polySynthPattern];
+    // Choose a % chance so that sometimes it is more busy, other times more sparse
+    const chance = d3.randomUniform(0.5, 1.5)();
+
+    // Loop through and create some random on/off values
+    const row = psPatternCopy[tuneData % notes.length];
+    tuneData++;
+    for (let x = 0; x < row.length; x++) {
+      row[x] = Math.abs(d3.randomNormal()()) > chance ? 1 : 0;
+    }
+    // Loop through again and make sure we don't have two
+    // consectutive on values (it sounds bad)
+    for (let x = 0; x < row.length - 1; x++) {
+      if (row[x] === 1 && row[x + 1] === 1) {
+        row[x + 1] = 0;
+        x++;
+      }
+    }
+    setPolySynthPattern(psPatternCopy);
+  }
+
+  useEffect(() => {
+    const polySynthLoop = new Tone.Sequence(
+      (time, col) => {
+        let notesToPlay = [];
+        polySynthPattern.map((row, noteIndex) => {
+          if (row[col]) {
+            notesToPlay.push(notes[noteIndex]);
+          }
+          return null;
+        });
+        polySynth.triggerAttackRelease(notesToPlay, "16n", time);
+      },
+      [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+      "16n"
+    ).start(0);
+    return () => polySynthLoop.dispose();
+  }, [polySynthPattern]);
+
   async function initialClick() {
     await Tone.start();
+    // Tone.context.resume()
     console.log("running");
     setClicked(true);
   }
@@ -95,15 +174,16 @@ const Sequencer = () => {
   function startStop() {
     if (clicked) {
       if (playState === "stopped") {
-        Tone.Transport.start(0);
-        setPlayState(Tone.Transport.state);
+        console.log("start");
+        Tone.Transport.start(Tone.now());
+        setPlayState("started");
       } else {
+        console.log("stop");
         Tone.Transport.stop();
-        setPlayState(Tone.Transport.state);
+        setPlayState("stopped");
       }
     }
   }
-  console.log(clicked)
 
   // Update pattern by making a copy and inverting the value
   function setPattern({ x, y, value }) {
@@ -113,18 +193,6 @@ const Sequencer = () => {
   }
   return (
     <div>
-      {pattern.map((row, y) => (
-        <div key={y} style={{ display: "flex", justifyContent: "center" }}>
-          {row.map((value, x) => (
-            <Square
-              key={x}
-              active={activeColumn === x}
-              value={value}
-              onClick={() => setPattern({ x, y, value })}
-            />
-          ))}
-        </div>
-      ))}
       <button
         style={{ display: !clicked ? "inline" : "none" }}
         onClick={initialClick}
@@ -137,6 +205,31 @@ const Sequencer = () => {
       >
         {playState}
       </button>
+      {pattern.map((row, y) => (
+        <div key={y} style={{ display: "flex", justifyContent: "center" }}>
+          {row.map((value, x) => (
+            <Square
+              key={x}
+              active={activeColumn === x}
+              value={value}
+              onClick={() => setPattern({ x, y, value })}
+            />
+          ))}
+        </div>
+      ))}
+      <br />
+      {polySynthPattern.map((row, y) => (
+        <div key={y} style={{ display: "flex", justifyContent: "center" }}>
+          {row.map((value, x) => (
+            <Square
+              key={x}
+              active={activeColumn === x}
+              value={value}
+              onClick={() => setPattern({ x, y, value })}
+            />
+          ))}
+        </div>
+      ))}
     </div>
   );
 };
