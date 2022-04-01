@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import * as Tone from "tone";
 import * as d3 from "d3-random";
 import Sketch from "react-p5";
+import Square from "../Square/Square";
 
 const initialPattern = [
   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -283,22 +284,6 @@ const Sequencer = () => {
     </div>
   );
 };
-
-const Square = ({ active, value, onClick }) => (
-  <div
-    style={{
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      width: 25,
-      height: 25,
-      background: value ? "#999" : "",
-      border: active ? "1px solid #999" : "1px solid #eee",
-      cursor: "pointer",
-    }}
-    onClick={onClick}
-  ></div>
-);
 
 const monoSynthWave = new Tone.Waveform();
 Tone.Destination.connect(monoSynthWave);
