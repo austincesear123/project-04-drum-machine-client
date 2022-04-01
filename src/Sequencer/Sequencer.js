@@ -19,7 +19,7 @@ bassSynth.volume.value = -6;
 const dist = new Tone.Distortion(0.1).toDestination();
 
 const snareSynth = new Tone.NoiseSynth({
-  volume: -9,
+  volume: -18,
   noise: {
     type: "white",
     playbackRate: 3,
@@ -62,14 +62,51 @@ const delay = new Tone.PingPongDelay("3.5n", 0.3).connect(reverb);
 delay.wet.value = 0.3;
 const polySynth = new Tone.PolySynth(Tone.DuoSynth).connect(delay);
 polySynth.set({
-  envelope: {
-    attack: 0.001,
-    decay: 1,
-    sustain: 0.1,
-    release: 0.1,
+  harmonicity: 3,
+  detune: -1200,
+  voice0: {
+    envelope: {
+      attack: 0.001,
+      decay: 0.5,
+      sustain: 0,
+      release: 0.01,
+    },
+  },
+  voice1: {
+    envelope: {
+      attack: 0.001,
+      decay: 0.5,
+      sustain: 0,
+      release: 0.01,
+    },
   },
 });
 polySynth.volume.value = -24;
+console.log(polySynth)
+const harmonicityLFO = new Tone.LFO("1m", 0.5, 3).start()
+
+const initialMonoSynthPattern = [
+  [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  //   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  //   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+];
+
+const filter = new Tone.Filter().toDestination();
+const monoSynth = new Tone.MonoSynth({
+  envelope: {
+    attack: 0.01,
+    decay: 0.4,
+    sustain: 0,
+    release: 0.01,
+  },
+}).connect(filter);
+monoSynth.volume.value = -15;
+const lfo = new Tone.LFO("2m", 100, 4000).start().connect(filter.frequency);
 
 const Sequencer = () => {
   const [clicked, setClicked] = useState(false);
@@ -79,6 +116,9 @@ const Sequencer = () => {
   const [polySynthPattern, setPolySynthPattern] = useState(
     initialPolySynthPattern
   );
+  const [monoSynthPattern, setMonoSynthPattern] = useState(
+    initialMonoSynthPattern
+  );
 
   useEffect(
     () => {
@@ -87,19 +127,18 @@ const Sequencer = () => {
           // Update active column for animation
           //   setColumn(col);
           // Loop current pattern
-          pattern.map((row, noteIndex) => {
+          pattern.forEach((row, noteIndex) => {
             // If active
             if (row[col] && noteIndex === 0) {
               // Play based on which row
-              bassSynth.triggerAttackRelease("C0", "8n", time + "+0.1");
+              bassSynth.triggerAttackRelease("C0", "16nn", time + "+0.1");
             } else if (row[col] && noteIndex === 1) {
               snareSynth.triggerAttackRelease("8n", time + "+0.1");
             } else if (row[col] && noteIndex === 2) {
-              hiHatSynth.triggerAttackRelease("C1", "8n", time + "+0.1");
+              hiHatSynth.triggerAttackRelease("C1", "16n", time + "+0.1");
             } else if (row[col] && noteIndex === 3) {
-              pluckSynth.triggerAttackRelease("C4", "8n", time + "+0.1");
+              pluckSynth.triggerAttackRelease("C4", "16n", time + "+0.1");
             }
-            return null;
           });
         },
         [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
@@ -111,7 +150,6 @@ const Sequencer = () => {
   );
 
   let tuneData = 0;
-
   useEffect(() => {
     Tone.Transport.scheduleRepeat(() => {
       randomizeSequencer();
@@ -144,19 +182,39 @@ const Sequencer = () => {
     const polySynthLoop = new Tone.Sequence(
       (time, col) => {
         let notesToPlay = [];
-        polySynthPattern.map((row, noteIndex) => {
+        polySynthPattern.forEach((row, noteIndex) => {
           if (row[col]) {
             notesToPlay.push(notes[noteIndex]);
           }
-          return null;
         });
-        polySynth.triggerAttackRelease(notesToPlay, "16n", time);
+        polySynth.triggerAttackRelease(notesToPlay, "16n", time + "+0.1");
       },
       [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
       "16n"
     ).start(0);
     return () => polySynthLoop.dispose();
   }, [polySynthPattern]);
+
+  useEffect(() => {
+    let steps128 = 0;
+    const monoSynthSequence = new Tone.Sequence(
+      (time, col) => {
+        if (steps128 < 64) {
+          steps128++;
+          monoSynth.triggerAttackRelease("C2", "16n", time + "+0.1");
+        } else if (steps128 >= 64 && steps128 < 127) {
+          steps128++;
+          monoSynth.triggerAttackRelease("A1", "16n", time + "+0.1");
+        } else {
+          steps128 = 0;
+          monoSynth.triggerAttackRelease("A1", "16n", time + "+0.1");
+        }
+      },
+      [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+      "16n"
+    ).start(0);
+    return () => monoSynthSequence.dispose();
+  }, [monoSynthPattern]);
 
   async function initialClick() {
     await Tone.start();
@@ -165,20 +223,12 @@ const Sequencer = () => {
     setClicked(true);
   }
 
-  // Toggle playing / stopped
-  // const toggle = useCallback(() => {
-  //   Tone.Transport.toggle();
-  //   setPlayState(Tone.Transport.state);
-  // }, []);
-
   function startStop() {
     if (clicked) {
       if (playState === "stopped") {
-        console.log("start");
         Tone.Transport.start(Tone.now());
         setPlayState("started");
       } else {
-        console.log("stop");
         Tone.Transport.stop();
         setPlayState("stopped");
       }
@@ -191,6 +241,7 @@ const Sequencer = () => {
     patternCopy[y][x] = +!value;
     updatePattern(patternCopy);
   }
+
   return (
     <div>
       <button
@@ -225,7 +276,7 @@ const Sequencer = () => {
               key={x}
               active={activeColumn === x}
               value={value}
-              onClick={() => setPattern({ x, y, value })}
+              // onClick={() => setPattern({ x, y, value })}
             />
           ))}
         </div>
