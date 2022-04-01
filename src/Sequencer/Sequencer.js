@@ -3,7 +3,9 @@ import * as Tone from "tone";
 import * as d3 from "d3-random";
 import Square from "../Square/Square";
 import Visualizer from "../Visualizer/Visualizer";
+import Toolbar from "../Toolbar/Toolbar";
 import audioProps from "../audioProps";
+import { click } from "@testing-library/user-event/dist/click";
 
 const Sequencer = () => {
   const [clicked, setClicked] = useState(false);
@@ -157,18 +159,12 @@ const Sequencer = () => {
 
   return (
     <div>
-      <button
-        style={{ display: !clicked ? "inline" : "none" }}
-        onClick={initialClick}
-      >
-        First Click here
-      </button>
-      <button
-        style={{ display: !clicked ? "none" : "inline" }}
-        onClick={startStop}
-      >
-        {playState}
-      </button>
+      <Toolbar
+        clicked={clicked}
+        initialClick={initialClick}
+        startStop={startStop}
+        playState={playState}
+      />
       {pattern.map((row, y) => (
         <div key={y} style={{ display: "flex", justifyContent: "center" }}>
           {row.map((value, x) => (
