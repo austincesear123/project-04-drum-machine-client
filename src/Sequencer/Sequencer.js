@@ -19,7 +19,7 @@ bassSynth.volume.value = -6;
 const dist = new Tone.Distortion(0.1).toDestination();
 
 const snareSynth = new Tone.NoiseSynth({
-  volume: -9,
+  volume: -12,
   noise: {
     type: "white",
     playbackRate: 3,
@@ -71,6 +71,30 @@ polySynth.set({
 });
 polySynth.volume.value = -24;
 
+const initialMonoSynthPattern = [
+  [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  //   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  //   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+];
+
+const filter = new Tone.Filter().toDestination();
+const cheby = new Tone.Chebyshev(50);
+const monoSynth = new Tone.MonoSynth({
+  envelope: {
+    attack: 0.01,
+    decay: 0.4,
+    sustain: 0,
+    release: 0.01,
+  },
+}).connect(filter);
+monoSynth.volume.value = -12;
+const lfo = new Tone.LFO("1m", 100, 4000).start().connect(filter.frequency);
+
 const Sequencer = () => {
   const [clicked, setClicked] = useState(false);
   const [playState, setPlayState] = useState(Tone.Transport.state);
@@ -78,6 +102,9 @@ const Sequencer = () => {
   const [pattern, updatePattern] = useState(initialPattern);
   const [polySynthPattern, setPolySynthPattern] = useState(
     initialPolySynthPattern
+  );
+  const [monoSynthPattern, setMonoSynthPattern] = useState(
+    initialMonoSynthPattern
   );
 
   useEffect(
@@ -91,13 +118,13 @@ const Sequencer = () => {
             // If active
             if (row[col] && noteIndex === 0) {
               // Play based on which row
-              bassSynth.triggerAttackRelease("C0", "8n", time + "+0.1");
+              bassSynth.triggerAttackRelease("C0", "16nn", time + "+0.1");
             } else if (row[col] && noteIndex === 1) {
               snareSynth.triggerAttackRelease("8n", time + "+0.1");
             } else if (row[col] && noteIndex === 2) {
-              hiHatSynth.triggerAttackRelease("C1", "8n", time + "+0.1");
+              hiHatSynth.triggerAttackRelease("C1", "16n", time + "+0.1");
             } else if (row[col] && noteIndex === 3) {
-              pluckSynth.triggerAttackRelease("C4", "8n", time + "+0.1");
+              pluckSynth.triggerAttackRelease("C4", "16n", time + "+0.1");
             }
             return null;
           });
@@ -111,7 +138,6 @@ const Sequencer = () => {
   );
 
   let tuneData = 0;
-
   useEffect(() => {
     Tone.Transport.scheduleRepeat(() => {
       randomizeSequencer();
@@ -150,13 +176,29 @@ const Sequencer = () => {
           }
           return null;
         });
-        polySynth.triggerAttackRelease(notesToPlay, "16n", time);
+        polySynth.triggerAttackRelease(notesToPlay, "16n", time + "+0.1");
       },
       [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
       "16n"
     ).start(0);
     return () => polySynthLoop.dispose();
   }, [polySynthPattern]);
+
+  useEffect(() => {
+    const monoSynthLoop = new Tone.Sequence(
+      (time, col) => {
+        monoSynthPattern.map((row, noteIndex) => {
+          if (row[col]) {
+            monoSynth.triggerAttackRelease("C2", "16n", time + "+0.1");
+          }
+          return null;
+        });
+      },
+      [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+      "16n"
+    ).start(0);
+    return () => monoSynthLoop.dispose();
+  }, [monoSynthPattern]);
 
   async function initialClick() {
     await Tone.start();
@@ -165,20 +207,12 @@ const Sequencer = () => {
     setClicked(true);
   }
 
-  // Toggle playing / stopped
-  // const toggle = useCallback(() => {
-  //   Tone.Transport.toggle();
-  //   setPlayState(Tone.Transport.state);
-  // }, []);
-
   function startStop() {
     if (clicked) {
       if (playState === "stopped") {
-        console.log("start");
         Tone.Transport.start(Tone.now());
         setPlayState("started");
       } else {
-        console.log("stop");
         Tone.Transport.stop();
         setPlayState("stopped");
       }
@@ -191,6 +225,7 @@ const Sequencer = () => {
     patternCopy[y][x] = +!value;
     updatePattern(patternCopy);
   }
+
   return (
     <div>
       <button
@@ -225,7 +260,7 @@ const Sequencer = () => {
               key={x}
               active={activeColumn === x}
               value={value}
-              onClick={() => setPattern({ x, y, value })}
+              // onClick={() => setPattern({ x, y, value })}
             />
           ))}
         </div>
