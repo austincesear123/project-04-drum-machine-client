@@ -3,6 +3,7 @@ import * as Tone from "tone";
 import * as d3 from "d3-random";
 import Square from "../Square/Square";
 import Visualizer from "../Visualizer/Visualizer";
+import DrumRows from "../DrumRows/DrumRows";
 import Toolbar from "../Toolbar/Toolbar";
 import audioProps from "../audioProps";
 
@@ -165,18 +166,7 @@ const Sequencer = () => {
         startStop={startStop}
         playState={playState}
       />
-      {pattern.map((row, y) => (
-        <div key={y} style={{ display: "flex", justifyContent: "center" }}>
-          {row.map((value, x) => (
-            <Square
-              key={x}
-              active={activeColumn === x}
-              value={value}
-              onClick={() => setPattern({ x, y, value })}
-            />
-          ))}
-        </div>
-      ))}
+      <DrumRows activeColumn={activeColumn} pattern={pattern} setPattern={setPattern} />
       <br />
       {polySynthPattern.map((row, y) => (
         <div key={y} style={{ display: "flex", justifyContent: "center" }}>
