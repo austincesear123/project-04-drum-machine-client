@@ -19,10 +19,13 @@ const DrumRows = ({ activeColumn, pattern, setPattern }) => {
                   active={activeColumn === x}
                   value={value}
                   onClick={() => setPattern({ x, y, value })}
+                  instrument={drumMap[y]}
                 />
               ))}
             </div>
-            <div className="drum-visualizer"><Visualizer instrument={drumMap[y]} /></div>
+            <div className="drum-visualizer">
+              <Visualizer instrument={drumMap[y]} />
+            </div>
           </React.Fragment>
         );
       })}
