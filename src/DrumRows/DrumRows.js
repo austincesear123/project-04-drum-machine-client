@@ -1,19 +1,18 @@
 import "./DrumRows.css";
 import Square from "../Square/Square";
+import Visualizer from "../Visualizer/Visualizer";
 import React from "react";
 
 const drumMap = ["Kick", "Snare", "HiHat", "Pluck"];
 
 const DrumRows = ({ activeColumn, pattern, setPattern }) => {
   return (
-    <div className="drums-container">
+    <div className="drum-container">
       {pattern.map((row, y) => {
         return (
           <React.Fragment key={y}>
-            <div className="drum-title" style={{ gridRow: y + 1 }}>
-              {drumMap[y]}
-            </div>
-            <div className="drum-squares" style={{ gridRow: y + 1 }}>
+            <div className="drum-label">{drumMap[y]}</div>
+            <div key={y} className="drum-row">
               {row.map((value, x) => (
                 <Square
                   key={x}
@@ -23,7 +22,7 @@ const DrumRows = ({ activeColumn, pattern, setPattern }) => {
                 />
               ))}
             </div>
-            <div className="three"></div>
+            <div className="drum-visualizer"><Visualizer /></div>
           </React.Fragment>
         );
       })}
