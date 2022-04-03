@@ -7,6 +7,8 @@ import DrumRows from "../DrumRows/DrumRows";
 import Toolbar from "../Toolbar/Toolbar";
 import audioProps from "../audioProps";
 
+Tone.Destination.volume.value = -6;
+
 const Sequencer = () => {
   const [clicked, setClicked] = useState(false);
   const [playState, setPlayState] = useState(Tone.Transport.state);
@@ -180,7 +182,7 @@ const Sequencer = () => {
           ))}
         </div>
       ))}
-      <Visualizer />
+      {/* <Visualizer /> */}
     </div>
   );
 };

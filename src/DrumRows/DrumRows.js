@@ -22,7 +22,7 @@ const DrumRows = ({ activeColumn, pattern, setPattern }) => {
                 />
               ))}
             </div>
-            <div className="drum-visualizer"><Visualizer /></div>
+            <div className="drum-visualizer"><Visualizer instrument={drumMap[y]} /></div>
           </React.Fragment>
         );
       })}
