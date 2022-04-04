@@ -1,0 +1,23 @@
+.drum-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: repeat(4, 1fr);
+}
+
+.drum-label {
+  grid-column: 1 / 2;
+  text-align: end;
+  align-self: center;
+  margin-right: 10px;
+}
+
+.drum-row {
+  grid-column: 2 / 3;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 5px;
+}
+
+.drum-visualizer {
+  text-align: start;
+}

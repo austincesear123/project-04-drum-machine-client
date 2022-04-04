@@ -3,13 +3,16 @@ import * as Tone from "tone";
 import * as d3 from "d3-random";
 import Square from "../Square/Square";
 import Visualizer from "../Visualizer/Visualizer";
+import DrumRows from "../DrumRows/DrumRows";
 import Toolbar from "../Toolbar/Toolbar";
 import audioProps from "../audioProps";
+
+Tone.Destination.volume.value = -6;
 
 const Sequencer = () => {
   const [clicked, setClicked] = useState(false);
   const [playState, setPlayState] = useState(Tone.Transport.state);
-  const [activeColumn, setColumn] = useState(0);
+  const [activeColumn, setColumn] = useState(-1);
   const [pattern, updatePattern] = useState(audioProps.initialPattern);
   const [polySynthPattern, setPolySynthPattern] = useState(
     audioProps.initialPolySynthPattern
@@ -49,8 +52,8 @@ const Sequencer = () => {
             }
           });
           Tone.Draw.schedule(() => {
-            setColumn(col)
-          }, time + "+0.1")
+            setColumn(col);
+          }, time + "+0.1");
         },
         [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
         "16n"
@@ -158,25 +161,18 @@ const Sequencer = () => {
   }
 
   return (
-    <div>
+    <div className="wrapper">
       <Toolbar
         clicked={clicked}
         initialClick={initialClick}
         startStop={startStop}
         playState={playState}
       />
-      {pattern.map((row, y) => (
-        <div key={y} style={{ display: "flex", justifyContent: "center" }}>
-          {row.map((value, x) => (
-            <Square
-              key={x}
-              active={activeColumn === x}
-              value={value}
-              onClick={() => setPattern({ x, y, value })}
-            />
-          ))}
-        </div>
-      ))}
+      <DrumRows
+        activeColumn={activeColumn}
+        pattern={pattern}
+        setPattern={setPattern}
+      />
       <br />
       {polySynthPattern.map((row, y) => (
         <div key={y} style={{ display: "flex", justifyContent: "center" }}>
@@ -185,12 +181,13 @@ const Sequencer = () => {
               key={x}
               active={activeColumn === x}
               value={value}
+              instrument={"PolySynth"}
               // onClick={() => setPattern({ x, y, value })}
             />
           ))}
         </div>
       ))}
-      <Visualizer />
+      {/* <Visualizer /> */}
     </div>
   );
 };

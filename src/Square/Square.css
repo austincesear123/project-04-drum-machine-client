@@ -1,0 +1,40 @@
+.square {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: 1px solid #eee;
+  width: 40px;
+  height: 40px;
+}
+
+.kick-active {
+  background: #10ac51;
+  opacity: 0.5;
+}
+
+.snare-active {
+  background: #1ada6a;
+  opacity: 0.5;
+}
+
+.hihat-active {
+  background: #56e993;
+  opacity: 0.5;
+}
+
+.pluck-active {
+  background: #87fdb8;
+  opacity: 0.5;
+}
+
+.polysynth-active {
+  background: #f200ff;
+  opacity: 0.5;
+}
+
+.timeline-active {
+  border: 1px solid #999;
+  background: #5b625e;
+  opacity: 0.33;
+}

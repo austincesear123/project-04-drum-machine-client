@@ -12,11 +12,11 @@ const initialPattern = [
 ];
 
 const bassSynth = new Tone.MembraneSynth().toDestination();
-bassSynth.volume.value = -6;
+// bassSynth.volume.value = -6;
 
 const dist = new Tone.Distortion(0.2).toDestination();
 const snareSynth = new Tone.NoiseSynth({
-  volume: -18,
+  volume: -11,
   noise: {
     type: "white",
     playbackRate: 3,
@@ -38,10 +38,10 @@ const hiHatSynth = new Tone.MetalSynth({
   },
   resonance: 8000,
 }).connect(dist);
-hiHatSynth.volume.value = -6;
+// hiHatSynth.volume.value = -6;
 
 const pluckSynth = new Tone.PluckSynth().toDestination();
-pluckSynth.volume.value = -6;
+// pluckSynth.volume.value = -6;
 
 const notes = ["A3", "C4", "D4", "E4", "G4", "A4"];
 const initialPolySynthPattern = [
@@ -78,7 +78,7 @@ polySynth.set({
     },
   },
 });
-polySynth.volume.value = -24;
+polySynth.volume.value = -18;
 
 const initialMonoSynthPattern = [
   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
@@ -100,7 +100,7 @@ const monoSynth = new Tone.MonoSynth({
     release: 0.01,
   },
 }).connect(filter);
-monoSynth.volume.value = -15;
+monoSynth.volume.value = -9;
 const lfo = new Tone.LFO("2m", 100, 4000).start().connect(filter.frequency);
 
 const audioProps = {
