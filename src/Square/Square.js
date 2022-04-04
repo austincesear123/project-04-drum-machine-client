@@ -8,6 +8,7 @@ const Square = ({
   note,
   index,
   clicked,
+  polySynthMode,
 }) => {
   let squareClass = ["square "];
 
@@ -15,6 +16,10 @@ const Square = ({
     if (index === 0 || index === 4 || index === 8 || index === 12) {
       squareClass.push("one-beat ");
     }
+  }
+
+  if (polySynthMode !== "Randomize") {
+    squareClass.push("hover ");
   }
 
   if (value) {

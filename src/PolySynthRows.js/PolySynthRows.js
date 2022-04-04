@@ -4,10 +4,33 @@ import audioProps from "../audioProps";
 import React from "react";
 import Visualizer from "../Visualizer/Visualizer";
 
-const PolySynthRows = ({ polySynthPattern, activeColumn, index, clicked }) => {
+const PolySynthRows = ({
+  polySynthPattern,
+  activeColumn,
+  index,
+  clicked,
+  updatePolySynthPattern,
+  polySynthMode,
+  handlePolySynthMode,
+}) => {
   return (
     <div className="polysynth-container">
-      <div className="polysynth-title">Polysynth</div>
+      <div className="polysynth-toolbar">
+        <div className="polysynth-title">Polysynth</div>
+        <div className="polysynth-select">
+          Sequencer Mode:
+          <select
+            className="form-select"
+            aria-label="Polysynth mode"
+            onChange={handlePolySynthMode}
+          >
+            <option value="Randomize" defaultValue>
+              Randomize
+            </option>
+            <option value="Manual">Manual</option>
+          </select>
+        </div>
+      </div>
       {polySynthPattern.map((row, y) => {
         return (
           <React.Fragment key={y}>
@@ -22,7 +45,14 @@ const PolySynthRows = ({ polySynthPattern, activeColumn, index, clicked }) => {
                   note={audioProps.notes[y]}
                   index={x}
                   clicked={clicked}
-                  // onClick={() => setPattern({ x, y, value })}
+                  polySynthMode={polySynthMode}
+                  onClick={
+                    polySynthMode === "Manual"
+                      ? () => updatePolySynthPattern({ x, y, value })
+                      : () => {
+                          return null;
+                        }
+                  }
                 />
               ))}
             </div>

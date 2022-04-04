@@ -19,7 +19,7 @@ const Toolbar = ({
             onClick={startStop}
           >
             {playState === "stopped" ? (
-              <i className="bi bi-play-fill" width="16" height="16" viewBox="0 0 16 16"></i>
+              <i className="bi bi-play-fill"></i>
             ) : (
               <i className="bi bi-stop-fill"></i>
             )}
