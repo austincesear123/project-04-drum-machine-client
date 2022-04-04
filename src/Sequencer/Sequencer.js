@@ -1,4 +1,4 @@
-import "./Sequencer.css"
+import "./Sequencer.css";
 import React, { useState, useEffect, useRef } from "react";
 import * as Tone from "tone";
 import * as d3 from "d3-random";
@@ -15,7 +15,7 @@ const Sequencer = () => {
   const [clicked, setClicked] = useState(false);
   const [playState, setPlayState] = useState(Tone.Transport.state);
   const [activeColumn, setColumn] = useState(-1);
-  const [pattern, updatePattern] = useState(audioProps.initialPattern);
+  const [pattern, setPattern] = useState(audioProps.initialPattern);
   const [polySynthPattern, setPolySynthPattern] = useState(
     audioProps.initialPolySynthPattern
   );
@@ -182,10 +182,16 @@ const Sequencer = () => {
   }
 
   // Update pattern by making a copy and inverting the value
-  function setPattern({ x, y, value }) {
+  function updatePattern({ x, y, value }) {
     const patternCopy = [...pattern];
     patternCopy[y][x] = +!value;
-    updatePattern(patternCopy);
+    setPattern(patternCopy);
+  }
+
+  function updatePolySynthPattern({ x, y, value }) {
+    const polySynthPatternCopy = [...polySynthPattern];
+    polySynthPatternCopy[y][x] = +!value;
+    setPolySynthPattern(polySynthPatternCopy);
   }
 
   function handleBPM(event) {
@@ -195,7 +201,12 @@ const Sequencer = () => {
 
   return (
     <>
-      <div className={clicked ? "hide" : "initial-click"} onClick={initialClick}><h1>CLICK ANYWHERE FIRST</h1></div>
+      <div
+        className={clicked ? "hide" : "initial-click"}
+        onClick={initialClick}
+      >
+        <h1>CLICK ANYWHERE FIRST</h1>
+      </div>
       <div className="wrapper" disabled>
         <Toolbar
           clicked={clicked}
@@ -208,13 +219,14 @@ const Sequencer = () => {
         <DrumRows
           activeColumn={activeColumn}
           pattern={pattern}
-          setPattern={setPattern}
+          updatePattern={updatePattern}
           clicked={clicked}
         />
         <br />
         <PolySynthRows
           polySynthPattern={polySynthPattern}
           activeColumn={activeColumn}
+          updatePolySynthPattern={updatePolySynthPattern}
           clicked={clicked}
         />
         {/* <Visualizer /> */}

@@ -5,7 +5,7 @@ import React from "react";
 
 const drumMap = ["Kick", "Snare", "HiHat", "Pluck"];
 
-const DrumRows = ({ activeColumn, pattern, setPattern, clicked }) => {
+const DrumRows = ({ activeColumn, pattern, updatePattern, clicked }) => {
   return (
     <div className="drum-container">
       {pattern.map((row, y) => {
@@ -18,7 +18,7 @@ const DrumRows = ({ activeColumn, pattern, setPattern, clicked }) => {
                   key={x}
                   active={activeColumn === x}
                   value={value}
-                  onClick={() => setPattern({ x, y, value })}
+                  onClick={() => updatePattern({ x, y, value })}
                   instrument={drumMap[y]}
                   index={x}
                   clicked={clicked}
