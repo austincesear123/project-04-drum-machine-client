@@ -17,16 +17,19 @@ const PolySynthRows = ({
     <div className="polysynth-container">
       <div className="polysynth-toolbar">
         <div className="polysynth-title">Polysynth</div>
-        <select
-          className="form-select"
-          aria-label="Polysynth mode"
-          onChange={handlePolySynthMode}
-        >
-          <option value="Randomize" defaultValue>
-            Randomize
-          </option>
-          <option value="Manual">Manual</option>
-        </select>
+        <div className="polysynth-select">
+          Sequencer Mode:
+          <select
+            className="form-select"
+            aria-label="Polysynth mode"
+            onChange={handlePolySynthMode}
+          >
+            <option value="Randomize" defaultValue>
+              Randomize
+            </option>
+            <option value="Manual">Manual</option>
+          </select>
+        </div>
       </div>
       {polySynthPattern.map((row, y) => {
         return (
