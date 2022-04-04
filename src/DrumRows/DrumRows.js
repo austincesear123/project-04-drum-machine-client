@@ -20,6 +20,7 @@ const DrumRows = ({ activeColumn, pattern, setPattern }) => {
                   value={value}
                   onClick={() => setPattern({ x, y, value })}
                   instrument={drumMap[y]}
+                  index={x}
                 />
               ))}
             </div>

@@ -2,8 +2,9 @@ import "./PolySynthRows.css";
 import Square from "../Square/Square";
 import audioProps from "../audioProps";
 import React from "react";
+import Visualizer from "../Visualizer/Visualizer";
 
-const PolySynthRows = ({ polySynthPattern, activeColumn }) => {
+const PolySynthRows = ({ polySynthPattern, activeColumn, index }) => {
   return (
     <div className="polysynth-container">
       <div className="polysynth-title">Polysynth</div>
@@ -19,6 +20,7 @@ const PolySynthRows = ({ polySynthPattern, activeColumn }) => {
                   value={value}
                   instrument={"Polysynth"}
                   note={audioProps.notes[y]}
+                  index={x}
                   // onClick={() => setPattern({ x, y, value })}
                 />
               ))}
@@ -26,6 +28,9 @@ const PolySynthRows = ({ polySynthPattern, activeColumn }) => {
           </React.Fragment>
         );
       })}
+      <div className="polysynth-visualizer">
+        <Visualizer instrument={"Polysynth"} />
+      </div>
     </div>
   );
 };
