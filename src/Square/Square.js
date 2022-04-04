@@ -1,11 +1,22 @@
 import "./Square.css";
 
-const Square = ({ active, value, onClick, instrument, note, index }) => {
+const Square = ({
+  active,
+  value,
+  onClick,
+  instrument,
+  note,
+  index,
+  clicked,
+}) => {
   let squareClass = ["square "];
 
-  if(index === 0 || index === 4 || index === 8 || index === 12){
-    squareClass.push("one-beat ")
+  if (clicked) {
+    if (index === 0 || index === 4 || index === 8 || index === 12) {
+      squareClass.push("one-beat ");
+    }
   }
+
   if (value) {
     if (instrument === "Kick") {
       squareClass.push("kick-active ");

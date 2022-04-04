@@ -13,17 +13,9 @@ const Toolbar = ({
       <div className="toolbar-container">
         <div className="toolbar-buttons">
           <button
-            className="btn btn-primary"
-            style={{ display: !clicked ? "inline" : "none" }}
-            onClick={initialClick}
-          >
-            First Click Here
-          </button>
-          <button
             className={
               playState === "stopped" ? "btn btn-success" : "btn btn-danger"
             }
-            style={{ display: !clicked ? "none" : "inline" }}
             onClick={startStop}
           >
             {playState === "stopped" ? (

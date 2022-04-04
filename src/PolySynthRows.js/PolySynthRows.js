@@ -4,7 +4,7 @@ import audioProps from "../audioProps";
 import React from "react";
 import Visualizer from "../Visualizer/Visualizer";
 
-const PolySynthRows = ({ polySynthPattern, activeColumn, index }) => {
+const PolySynthRows = ({ polySynthPattern, activeColumn, index, clicked }) => {
   return (
     <div className="polysynth-container">
       <div className="polysynth-title">Polysynth</div>
@@ -21,6 +21,7 @@ const PolySynthRows = ({ polySynthPattern, activeColumn, index }) => {
                   instrument={"Polysynth"}
                   note={audioProps.notes[y]}
                   index={x}
+                  clicked={clicked}
                   // onClick={() => setPattern({ x, y, value })}
                 />
               ))}
