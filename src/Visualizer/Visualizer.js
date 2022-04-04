@@ -23,7 +23,7 @@ const Visualizer = ({ instrument }) => {
     // use parent to render the canvas in this ref
     // (without that p5 will render the canvas outside of your component)
     if (instrument === "Polysynth") {
-      p5.createCanvas(672, 42).parent(canvasParentRef);
+      p5.createCanvas(640, 42).parent(canvasParentRef);
     } else {
       p5.createCanvas(84, 42).parent(canvasParentRef);
     }

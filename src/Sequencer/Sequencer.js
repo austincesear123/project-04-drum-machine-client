@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import * as Tone from "tone";
 import * as d3 from "d3-random";
 import Square from "../Square/Square";
@@ -21,6 +21,7 @@ const Sequencer = () => {
   const [monoSynthPattern, setMonoSynthPattern] = useState(
     audioProps.initialMonoSynthPattern
   );
+  const [bpm, setBPM] = useState(Tone.Transport.bpm.value);
 
   useEffect(
     () => {
@@ -67,31 +68,49 @@ const Sequencer = () => {
   let tuneData = 0;
   useEffect(() => {
     Tone.Transport.scheduleRepeat(() => {
-      randomizeSequencer();
+      const psPatternCopy = [...polySynthPattern];
+      // Choose a % chance so that sometimes it is more busy, other times more sparse
+      const chance = d3.randomUniform(0.5, 1.5)();
+
+      // Loop through and create some random on/off values
+      const row = psPatternCopy[tuneData % audioProps.notes.length];
+      tuneData++;
+      for (let x = 0; x < row.length; x++) {
+        row[x] = Math.abs(d3.randomNormal()()) > chance ? 1 : 0;
+      }
+      // Loop through again and make sure we don't have two
+      // consectutive on values (it sounds bad)
+      for (let x = 0; x < row.length - 1; x++) {
+        if (row[x] === 1 && row[x + 1] === 1) {
+          row[x + 1] = 0;
+          x++;
+        }
+      }
+      setPolySynthPattern(psPatternCopy);
     }, "2m");
   }, []);
 
-  function randomizeSequencer() {
-    const psPatternCopy = [...polySynthPattern];
-    // Choose a % chance so that sometimes it is more busy, other times more sparse
-    const chance = d3.randomUniform(0.5, 1.5)();
+  // function randomizeSequencer() {
+  //   const psPatternCopy = [...polySynthPattern];
+  //   // Choose a % chance so that sometimes it is more busy, other times more sparse
+  //   const chance = d3.randomUniform(0.5, 1.5)();
 
-    // Loop through and create some random on/off values
-    const row = psPatternCopy[tuneData % audioProps.notes.length];
-    tuneData++;
-    for (let x = 0; x < row.length; x++) {
-      row[x] = Math.abs(d3.randomNormal()()) > chance ? 1 : 0;
-    }
-    // Loop through again and make sure we don't have two
-    // consectutive on values (it sounds bad)
-    for (let x = 0; x < row.length - 1; x++) {
-      if (row[x] === 1 && row[x + 1] === 1) {
-        row[x + 1] = 0;
-        x++;
-      }
-    }
-    setPolySynthPattern(psPatternCopy);
-  }
+  //   // Loop through and create some random on/off values
+  //   const row = psPatternCopy[tuneData % audioProps.notes.length];
+  //   tuneData++;
+  //   for (let x = 0; x < row.length; x++) {
+  //     row[x] = Math.abs(d3.randomNormal()()) > chance ? 1 : 0;
+  //   }
+  //   // Loop through again and make sure we don't have two
+  //   // consectutive on values (it sounds bad)
+  //   for (let x = 0; x < row.length - 1; x++) {
+  //     if (row[x] === 1 && row[x + 1] === 1) {
+  //       row[x + 1] = 0;
+  //       x++;
+  //     }
+  //   }
+  //   setPolySynthPattern(psPatternCopy);
+  // }
 
   useEffect(() => {
     const polySynthLoop = new Tone.Sequence(
@@ -114,19 +133,25 @@ const Sequencer = () => {
     return () => polySynthLoop.dispose();
   }, [polySynthPattern]);
 
+  let steps128 = useRef(0);
   useEffect(() => {
-    let steps128 = 0;
     const monoSynthSequence = new Tone.Sequence(
       (time, col) => {
-        if (steps128 < 64) {
-          steps128++;
+        if (steps128.current < 64) {
           audioProps.monoSynth.triggerAttackRelease("C2", "16n", time + "+0.1");
-        } else if (steps128 >= 64 && steps128 < 127) {
-          steps128++;
+          Tone.Draw.schedule(() => {
+            steps128.current++;
+          }, time + "+0.1");
+        } else if (steps128.current >= 64 && steps128.current < 127) {
           audioProps.monoSynth.triggerAttackRelease("A1", "16n", time + "+0.1");
+          Tone.Draw.schedule(() => {
+            steps128.current++;
+          }, time + "+0.1");
         } else {
-          steps128 = 0;
           audioProps.monoSynth.triggerAttackRelease("A1", "16n", time + "+0.1");
+          Tone.Draw.schedule(() => {
+            steps128.current = 0;
+          }, time + "+0.1");
         }
       },
       [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
@@ -145,6 +170,7 @@ const Sequencer = () => {
   function startStop() {
     if (clicked) {
       if (playState === "stopped") {
+        steps128.current = 0;
         Tone.Transport.start(Tone.now());
         setPlayState("started");
       } else {
@@ -161,6 +187,11 @@ const Sequencer = () => {
     updatePattern(patternCopy);
   }
 
+  function handleBPM(event) {
+    Tone.Transport.bpm.value = event.target.value;
+    setBPM(event.target.value);
+  }
+
   return (
     <div className="wrapper">
       <Toolbar
@@ -168,6 +199,8 @@ const Sequencer = () => {
         initialClick={initialClick}
         startStop={startStop}
         playState={playState}
+        bpm={bpm}
+        handleBPM={handleBPM}
       />
       <DrumRows
         activeColumn={activeColumn}
