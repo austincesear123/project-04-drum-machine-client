@@ -8,6 +8,11 @@
   height: 40px;
 }
 
+.one-beat {
+  background: #e0e0e0;
+  opacity: 0.3;
+}
+
 .kick-active {
   background: #10ac51;
   opacity: 0.5;
@@ -28,7 +33,32 @@
   opacity: 0.5;
 }
 
-.polysynth-active {
+.polysynth-a3 {
+  background: #f200ff;
+  opacity: 0.5;
+}
+
+.polysynth-c4 {
+  background: #AE2AB5;
+  opacity: 0.5;
+}
+
+.polysynth-d4 {
+  background: #D41DDE;
+  opacity: 0.5;
+}
+
+.polysynth-e4 {
+  background: #800087;
+  opacity: 0.5;
+}
+
+.polysynth-g4 {
+  background: #921599;
+  opacity: 0.5;
+}
+
+.polysynth-a4 {
   background: #f200ff;
   opacity: 0.5;
 }
