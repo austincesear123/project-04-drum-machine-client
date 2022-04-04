@@ -2,4 +2,13 @@
     padding: 10px;
     display: flex;
     justify-content: center;
+    align-items: baseline;
+}
+
+.toolbar-buttons {
+    margin: 0 20px;
+}
+
+.bpm-display {
+    margin: 0 20px;
 }

@@ -26,10 +26,14 @@ const Toolbar = ({
             style={{ display: !clicked ? "none" : "inline" }}
             onClick={startStop}
           >
-            {playState === "stopped" ? "Start" : "Stop"}
+            {playState === "stopped" ? (
+              <i className="bi bi-play-fill" width="16" height="16" viewBox="0 0 16 16"></i>
+            ) : (
+              <i className="bi bi-stop-fill"></i>
+            )}
           </button>
         </div>
-        <div>
+        <div className="bpm-display">
           BPM:
           <input
             type="number"
