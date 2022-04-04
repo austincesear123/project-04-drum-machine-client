@@ -1,0 +1,15 @@
+.initial-click {
+  position: absolute;
+  height: 100vh;
+  width: 100vw;
+  background: black;
+  opacity: 0.8;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.hide {
+  display: none;
+}

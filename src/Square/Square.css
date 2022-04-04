@@ -1,0 +1,73 @@
+.square {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #eee;
+  width: 40px;
+  height: 40px;
+}
+
+.hover {
+  cursor: pointer;
+}
+
+.one-beat {
+  background: #e0e0e0;
+  opacity: 0.3;
+}
+
+.kick-active {
+  background: #10ac51;
+  opacity: 0.5;
+}
+
+.snare-active {
+  background: #1ada6a;
+  opacity: 0.5;
+}
+
+.hihat-active {
+  background: #56e993;
+  opacity: 0.5;
+}
+
+.pluck-active {
+  background: #87fdb8;
+  opacity: 0.5;
+}
+
+.polysynth-a3 {
+  background: #f200ff;
+  opacity: 0.5;
+}
+
+.polysynth-c4 {
+  background: #AE2AB5;
+  opacity: 0.5;
+}
+
+.polysynth-d4 {
+  background: #D41DDE;
+  opacity: 0.5;
+}
+
+.polysynth-e4 {
+  background: #800087;
+  opacity: 0.5;
+}
+
+.polysynth-g4 {
+  background: #921599;
+  opacity: 0.5;
+}
+
+.polysynth-a4 {
+  background: #f200ff;
+  opacity: 0.5;
+}
+
+.timeline-active {
+  border: 1px solid #999;
+  background: #5b625e;
+  opacity: 0.33;
+}

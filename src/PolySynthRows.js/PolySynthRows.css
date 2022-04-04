@@ -1,0 +1,47 @@
+.polysynth-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: repeat(4, 1fr);
+}
+
+.polysynth-notes {
+  grid-column: 1 / 2;
+  text-align: end;
+  align-self: center;
+  margin-right: 10px;
+}
+
+.polysynth-row {
+  grid-column: 2 / 3;
+  display: flex;
+  justify-content: center;
+}
+
+.polysynth-toolbar {
+  grid-column: 2 / 3;
+  text-align: center;
+  align-self: end;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.polysynth-title {
+  margin: 0 20px;
+}
+
+.polysynth-select {
+  display: flex;
+  align-items: baseline;
+  margin: 0 20px;
+}
+
+.polysynth-visualizer {
+  grid-column: 2 / 3;
+}
+
+.form-select {
+  width: 150px;
+
+}
