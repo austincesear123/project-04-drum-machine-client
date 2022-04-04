@@ -5,6 +5,7 @@ import Square from "../Square/Square";
 import Visualizer from "../Visualizer/Visualizer";
 import DrumRows from "../DrumRows/DrumRows";
 import Toolbar from "../Toolbar/Toolbar";
+import PolySynthRows from "../PolySynthRows.js/PolySynthRows";
 import audioProps from "../audioProps";
 
 Tone.Destination.volume.value = -6;
@@ -174,19 +175,10 @@ const Sequencer = () => {
         setPattern={setPattern}
       />
       <br />
-      {polySynthPattern.map((row, y) => (
-        <div key={y} style={{ display: "flex", justifyContent: "center" }}>
-          {row.map((value, x) => (
-            <Square
-              key={x}
-              active={activeColumn === x}
-              value={value}
-              instrument={"PolySynth"}
-              // onClick={() => setPattern({ x, y, value })}
-            />
-          ))}
-        </div>
-      ))}
+      <PolySynthRows
+        polySynthPattern={polySynthPattern}
+        activeColumn={activeColumn}
+      />
       {/* <Visualizer /> */}
     </div>
   );
