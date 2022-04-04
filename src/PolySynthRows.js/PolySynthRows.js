@@ -11,13 +11,14 @@ const PolySynthRows = ({ polySynthPattern, activeColumn }) => {
         return (
           <React.Fragment key={y}>
             <div className="polysynth-notes">{audioProps.notes[y]}</div>
-            <div key={y} className="polysynth-row" style={{ display: "flex", justifyContent: "center" }}>
+            <div key={y} className="polysynth-row">
               {row.map((value, x) => (
                 <Square
                   key={x}
                   active={activeColumn === x}
                   value={value}
-                  instrument={"PolySynth"}
+                  instrument={"Polysynth"}
+                  note={audioProps.notes[y]}
                   // onClick={() => setPattern({ x, y, value })}
                 />
               ))}

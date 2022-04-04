@@ -22,8 +22,8 @@ const Visualizer = ({ instrument }) => {
   };
 
   const draw = (p5) => {
-    p5.background(0);
-    p5.stroke(255);
+    p5.background(255);
+    p5.stroke(0);
     let buffer;
     if (instrument === "Kick") {
       buffer = bassSynthWave.getValue(0);
