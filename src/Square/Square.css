@@ -9,17 +9,17 @@
 }
 
 .kick-active {
-  background: #14b858;
+  background: #10ac51;
   opacity: 0.5;
 }
 
 .snare-active {
-  background: #1ceb72;
+  background: #1ada6a;
   opacity: 0.5;
 }
 
 .hihat-active {
-  background: #57f298;
+  background: #56e993;
   opacity: 0.5;
 }
 
