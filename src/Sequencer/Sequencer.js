@@ -1,3 +1,4 @@
+import "./Sequencer.css"
 import React, { useState, useEffect, useRef } from "react";
 import * as Tone from "tone";
 import * as d3 from "d3-random";
@@ -193,27 +194,32 @@ const Sequencer = () => {
   }
 
   return (
-    <div className="wrapper">
-      <Toolbar
-        clicked={clicked}
-        initialClick={initialClick}
-        startStop={startStop}
-        playState={playState}
-        bpm={bpm}
-        handleBPM={handleBPM}
-      />
-      <DrumRows
-        activeColumn={activeColumn}
-        pattern={pattern}
-        setPattern={setPattern}
-      />
-      <br />
-      <PolySynthRows
-        polySynthPattern={polySynthPattern}
-        activeColumn={activeColumn}
-      />
-      {/* <Visualizer /> */}
-    </div>
+    <>
+      <div className={clicked ? "hide" : "initial-click"} onClick={initialClick}><h1>CLICK ANYWHERE FIRST</h1></div>
+      <div className="wrapper" disabled>
+        <Toolbar
+          clicked={clicked}
+          initialClick={initialClick}
+          startStop={startStop}
+          playState={playState}
+          bpm={bpm}
+          handleBPM={handleBPM}
+        />
+        <DrumRows
+          activeColumn={activeColumn}
+          pattern={pattern}
+          setPattern={setPattern}
+          clicked={clicked}
+        />
+        <br />
+        <PolySynthRows
+          polySynthPattern={polySynthPattern}
+          activeColumn={activeColumn}
+          clicked={clicked}
+        />
+        {/* <Visualizer /> */}
+      </div>
+    </>
   );
 };
 
