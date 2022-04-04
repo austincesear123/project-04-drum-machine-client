@@ -23,6 +23,8 @@ const Sequencer = () => {
     audioProps.initialMonoSynthPattern
   );
   const [bpm, setBPM] = useState(Tone.Transport.bpm.value);
+  const [polySynthMode, setPolySynthMode] = useState("Randomize");
+  const [repeatID, setRepeatID] = useState(0);
 
   useEffect(
     () => {
@@ -68,28 +70,33 @@ const Sequencer = () => {
 
   let tuneData = 0;
   useEffect(() => {
-    Tone.Transport.scheduleRepeat(() => {
-      const psPatternCopy = [...polySynthPattern];
-      // Choose a % chance so that sometimes it is more busy, other times more sparse
-      const chance = d3.randomUniform(0.5, 1.5)();
+    if (polySynthMode === "Randomize") {
+      let repeat = Tone.Transport.scheduleRepeat(() => {
+        const psPatternCopy = [...polySynthPattern];
+        // Choose a % chance so that sometimes it is more busy, other times more sparse
+        const chance = d3.randomUniform(0.5, 1.5)();
 
-      // Loop through and create some random on/off values
-      const row = psPatternCopy[tuneData % audioProps.notes.length];
-      tuneData++;
-      for (let x = 0; x < row.length; x++) {
-        row[x] = Math.abs(d3.randomNormal()()) > chance ? 1 : 0;
-      }
-      // Loop through again and make sure we don't have two
-      // consectutive on values (it sounds bad)
-      for (let x = 0; x < row.length - 1; x++) {
-        if (row[x] === 1 && row[x + 1] === 1) {
-          row[x + 1] = 0;
-          x++;
+        // Loop through and create some random on/off values
+        const row = psPatternCopy[tuneData % audioProps.notes.length];
+        tuneData++;
+        for (let x = 0; x < row.length; x++) {
+          row[x] = Math.abs(d3.randomNormal()()) > chance ? 1 : 0;
         }
-      }
-      setPolySynthPattern(psPatternCopy);
-    }, "2m");
-  }, []);
+        // Loop through again and make sure we don't have two
+        // consectutive on values (it sounds bad)
+        for (let x = 0; x < row.length - 1; x++) {
+          if (row[x] === 1 && row[x + 1] === 1) {
+            row[x + 1] = 0;
+            x++;
+          }
+        }
+        setPolySynthPattern(psPatternCopy);
+      }, "2m");
+      setRepeatID(repeat);
+    } else {
+      Tone.Transport.clear(repeatID);
+    }
+  }, [polySynthMode]);
 
   // function randomizeSequencer() {
   //   const psPatternCopy = [...polySynthPattern];
@@ -199,6 +206,10 @@ const Sequencer = () => {
     setBPM(event.target.value);
   }
 
+  function handlePolySynthMode(event) {
+    setPolySynthMode(event.target.value);
+  }
+
   return (
     <>
       <div
@@ -207,7 +218,7 @@ const Sequencer = () => {
       >
         <h1>CLICK ANYWHERE FIRST</h1>
       </div>
-      <div className="wrapper" disabled>
+      <div className="wrapper">
         <Toolbar
           clicked={clicked}
           initialClick={initialClick}
@@ -228,6 +239,8 @@ const Sequencer = () => {
           activeColumn={activeColumn}
           updatePolySynthPattern={updatePolySynthPattern}
           clicked={clicked}
+          polySynthMode={polySynthMode}
+          handlePolySynthMode={handlePolySynthMode}
         />
         {/* <Visualizer /> */}
       </div>

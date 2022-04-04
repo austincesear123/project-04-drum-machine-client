@@ -10,10 +10,24 @@ const PolySynthRows = ({
   index,
   clicked,
   updatePolySynthPattern,
+  polySynthMode,
+  handlePolySynthMode,
 }) => {
   return (
     <div className="polysynth-container">
-      <div className="polysynth-title">Polysynth</div>
+      <div className="polysynth-toolbar">
+        <div className="polysynth-title">Polysynth</div>
+        <select
+          className="form-select"
+          aria-label="Polysynth mode"
+          onChange={handlePolySynthMode}
+        >
+          <option value="Randomize" defaultValue>
+            Randomize
+          </option>
+          <option value="Manual">Manual</option>
+        </select>
+      </div>
       {polySynthPattern.map((row, y) => {
         return (
           <React.Fragment key={y}>
@@ -28,7 +42,14 @@ const PolySynthRows = ({
                   note={audioProps.notes[y]}
                   index={x}
                   clicked={clicked}
-                  onClick={() => updatePolySynthPattern({ x, y, value })}
+                  polySynthMode={polySynthMode}
+                  onClick={
+                    polySynthMode === "Manual"
+                      ? () => updatePolySynthPattern({ x, y, value })
+                      : () => {
+                          return null;
+                        }
+                  }
                 />
               ))}
             </div>

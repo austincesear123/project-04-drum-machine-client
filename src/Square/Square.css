@@ -2,10 +2,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
   border: 1px solid #eee;
   width: 40px;
   height: 40px;
+}
+
+.hover {
+  cursor: pointer;
 }
 
 .one-beat {
