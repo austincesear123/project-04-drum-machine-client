@@ -1,6 +1,7 @@
+@import url("https://fonts.googleapis.com/css2?family=Space+Mono&display=swap");
+
 .App {
-  font-family: "Space Mono", "Courier New", Courier, monospace;
-  font-weight: 1000;
+  font-family: "Space Mono", monospace;
   text-align: center;
-  /* background: rgb(233, 233, 233); */
+  /* background: rgb(253, 252, 252); */
 }
