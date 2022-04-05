@@ -11,12 +11,15 @@ const initialPattern = [
   //   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
 ];
 
-const bassSynth = new Tone.MembraneSynth().toDestination();
+const drumsMasterChannel = new Tone.Channel().toDestination();
+
+const bassSynth = new Tone.MembraneSynth().connect(drumsMasterChannel);
 // bassSynth.volume.value = -6;
 
-const dist = new Tone.Distortion(0.2).toDestination();
+const dist = new Tone.Distortion(0.2).connect(drumsMasterChannel);
+const snareChannel = new Tone.Channel(-11).connect(dist);
 const snareSynth = new Tone.NoiseSynth({
-  volume: -11,
+  // volume: -11,
   noise: {
     type: "white",
     playbackRate: 3,
@@ -27,8 +30,9 @@ const snareSynth = new Tone.NoiseSynth({
     sustain: 0,
     release: 0.05,
   },
-}).connect(dist);
+}).connect(snareChannel);
 
+const hiHatChannel = new Tone.Channel(-3, -0.25).connect(dist);
 const hiHatSynth = new Tone.MetalSynth({
   envelope: {
     attack: 0.001,
@@ -37,10 +41,11 @@ const hiHatSynth = new Tone.MetalSynth({
     release: 0.03,
   },
   resonance: 8000,
-}).connect(dist);
+}).connect(hiHatChannel);
 // hiHatSynth.volume.value = -6;
 
-const pluckSynth = new Tone.PluckSynth().toDestination();
+const pluckSynthChannel = new Tone.Channel(0, 0.25).connect(drumsMasterChannel);
+const pluckSynth = new Tone.PluckSynth().connect(pluckSynthChannel);
 // pluckSynth.volume.value = -6;
 
 const notes = ["A3", "C4", "D4", "E4", "G4", "A4"];
@@ -52,11 +57,12 @@ const initialPolySynthPattern = [
   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
 ];
-
-const reverb = new Tone.Reverb(3).toDestination();
+const polySynthChannel = new Tone.Channel(-15).toDestination();
+const reverb = new Tone.Reverb(3).connect(polySynthChannel);
 reverb.wet.value = 0.5;
 const delay = new Tone.PingPongDelay("3.5n", 0.3).connect(reverb);
 delay.wet.value = 0.3;
+
 const polySynth = new Tone.PolySynth(Tone.DuoSynth).connect(delay);
 polySynth.set({
   harmonicity: 3,
@@ -78,7 +84,7 @@ polySynth.set({
     },
   },
 });
-polySynth.volume.value = -18;
+// polySynth.volume.value = -18;
 
 const initialMonoSynthPattern = [
   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
@@ -91,7 +97,8 @@ const initialMonoSynthPattern = [
   //   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
 ];
 
-const filter = new Tone.Filter().toDestination();
+const monoSynthChannel = new Tone.Channel(-12).toDestination();
+const filter = new Tone.Filter().connect(monoSynthChannel);
 const monoSynth = new Tone.MonoSynth({
   envelope: {
     attack: 0.01,
@@ -100,7 +107,7 @@ const monoSynth = new Tone.MonoSynth({
     release: 0.01,
   },
 }).connect(filter);
-monoSynth.volume.value = -9;
+// monoSynth.volume.value = -9;
 const lfo = new Tone.LFO("2m", 100, 4000).start().connect(filter.frequency);
 
 const audioProps = {
@@ -114,6 +121,9 @@ const audioProps = {
   notes,
   polySynth,
   monoSynth,
+  drumsMasterChannel,
+  polySynthChannel,
+  monoSynthChannel
 };
 
 export default audioProps;

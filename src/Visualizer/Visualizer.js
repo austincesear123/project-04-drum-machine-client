@@ -1,4 +1,4 @@
-import "./Visualizer.css"
+import "./Visualizer.css";
 import * as Tone from "tone";
 import Sketch from "react-p5";
 import audioProps from "../audioProps";
@@ -18,11 +18,14 @@ audioProps.pluckSynth.connect(pluckSynthWave);
 const polySynthWave = new Tone.Waveform();
 audioProps.polySynth.connect(polySynthWave);
 
+const monoSynthWave = new Tone.Waveform();
+audioProps.monoSynth.connect(monoSynthWave);
+
 const Visualizer = ({ instrument }) => {
   const setup = (p5, canvasParentRef) => {
     // use parent to render the canvas in this ref
     // (without that p5 will render the canvas outside of your component)
-    if (instrument === "Polysynth") {
+    if (instrument === "Polysynth" || instrument === "Monosynth") {
       p5.createCanvas(640, 42).parent(canvasParentRef);
     } else {
       p5.createCanvas(84, 42).parent(canvasParentRef);
@@ -43,6 +46,8 @@ const Visualizer = ({ instrument }) => {
       buffer = pluckSynthWave.getValue(0);
     } else if (instrument === "Polysynth") {
       buffer = polySynthWave.getValue(0);
+    } else if (instrument === "Monosynth") {
+      buffer = monoSynthWave.getValue(0);
     }
 
     for (let i = 0; i < buffer.length; i++) {

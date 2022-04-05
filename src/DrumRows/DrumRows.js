@@ -5,9 +5,40 @@ import React from "react";
 
 const drumMap = ["Kick", "Snare", "HiHat", "Pluck"];
 
-const DrumRows = ({ activeColumn, pattern, updatePattern, clicked }) => {
+const DrumRows = ({
+  activeColumn,
+  pattern,
+  updatePattern,
+  clicked,
+  handleDrumsMute,
+  drumsMute,
+  drumsSolo,
+  handleDrumsSolo
+}) => {
   return (
     <div className="drum-container">
+      <div className="drum-toolbar">
+        <div className="drum-title">Drum Machine</div>
+        <div className="drum-buttons">
+          <button
+            className={
+              drumsMute ? "btn btn-danger btn-sm" : "btn btn-secondary btn-sm"
+            }
+            onClick={handleDrumsMute}
+          >
+            Mute
+          </button>
+          <button
+            className={
+              drumsSolo ? "btn btn-primary btn-sm" : "btn btn-secondary btn-sm"
+            }
+            onClick={handleDrumsSolo}
+          >
+            Solo
+          </button>
+        </div>
+      </div>
+
       {pattern.map((row, y) => {
         return (
           <React.Fragment key={y}>

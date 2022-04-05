@@ -2,11 +2,10 @@ import "./Sequencer.css";
 import React, { useState, useEffect, useRef } from "react";
 import * as Tone from "tone";
 import * as d3 from "d3-random";
-import Square from "../Square/Square";
-import Visualizer from "../Visualizer/Visualizer";
 import DrumRows from "../DrumRows/DrumRows";
 import Toolbar from "../Toolbar/Toolbar";
 import PolySynthRows from "../PolySynthRows.js/PolySynthRows";
+import MonoSynthRows from "../MonoSynthRows.js/MonoSynthRows";
 import audioProps from "../audioProps";
 
 Tone.Destination.volume.value = -6;
@@ -25,6 +24,12 @@ const Sequencer = () => {
   const [bpm, setBPM] = useState(Tone.Transport.bpm.value);
   const [polySynthMode, setPolySynthMode] = useState("Randomize");
   const [repeatID, setRepeatID] = useState(0);
+  const [drumsMute, setDrumsMute] = useState(false);
+  const [polySynthMute, setPolySynthMute] = useState(false);
+  const [monoSynthMute, setMonoSynthMute] = useState(false);
+  const [drumsSolo, setDrumsSolo] = useState(false);
+  const [polySynthSolo, setPolySynthSolo] = useState(false);
+  const [monoSynthSolo, setMonoSynthSolo] = useState(false);
 
   useEffect(
     () => {
@@ -82,8 +87,8 @@ const Sequencer = () => {
         for (let x = 0; x < row.length; x++) {
           row[x] = Math.abs(d3.randomNormal()()) > chance ? 1 : 0;
         }
-        // Loop through again and make sure we don't have two
-        // consectutive on values (it sounds bad)
+        // Loop through again and make sure there's no two
+        // consectutive on values
         for (let x = 0; x < row.length - 1; x++) {
           if (row[x] === 1 && row[x + 1] === 1) {
             row[x + 1] = 0;
@@ -210,6 +215,117 @@ const Sequencer = () => {
     setPolySynthMode(event.target.value);
   }
 
+  function handleDrumsMute() {
+    if (!drumsMute) {
+      if (drumsSolo) {
+        handleDrumsSolo();
+      }
+      audioProps.drumsMasterChannel.volume.value = -Infinity;
+      setDrumsMute(true);
+    } else if (drumsMute) {
+      if (!polySynthSolo && !monoSynthSolo) {
+        audioProps.drumsMasterChannel.volume.value = 0;
+      }
+      setDrumsMute(false);
+    }
+  }
+
+  function handlePolySynthMute() {
+    if (!polySynthMute) {
+      if (polySynthSolo) {
+        handlePolySynthSolo();
+      }
+      audioProps.polySynthChannel.volume.value = -Infinity;
+      setPolySynthMute(true);
+    } else if (polySynthMute) {
+      if (!drumsSolo && !monoSynthSolo) {
+        audioProps.polySynthChannel.volume.value = -15;
+      }
+      setPolySynthMute(false);
+    }
+  }
+
+  function handleMonoSynthMute() {
+    if (!monoSynthMute) {
+      if (monoSynthSolo) {
+        handleMonoSynthSolo();
+      }
+      audioProps.monoSynthChannel.volume.value = -Infinity;
+      setMonoSynthMute(true);
+    } else if (monoSynthMute) {
+      if (!drumsSolo && !polySynthSolo) {
+        audioProps.monoSynthChannel.volume.value = -12;
+      }
+      setMonoSynthMute(false);
+    }
+  }
+
+  function handleDrumsSolo() {
+    if (!drumsSolo) {
+      if (drumsMute) {
+        handleDrumsMute();
+      }
+      audioProps.drumsMasterChannel.volume.value = 0;
+      audioProps.polySynthChannel.volume.value = -Infinity;
+      audioProps.monoSynthChannel.volume.value = -Infinity;
+      setDrumsSolo(true);
+      setPolySynthSolo(false);
+      setMonoSynthSolo(false);
+    } else if (drumsSolo) {
+      if (!polySynthMute) {
+        audioProps.polySynthChannel.volume.value = -15;
+      }
+      if (!monoSynthMute) {
+        audioProps.monoSynthChannel.volume.value = -12;
+      }
+      setDrumsSolo(false);
+    }
+  }
+
+  function handlePolySynthSolo() {
+    if (!polySynthSolo) {
+      if (polySynthMute) {
+        handlePolySynthMute();
+      }
+      audioProps.polySynthChannel.volume.value = -15;
+      audioProps.drumsMasterChannel.volume.value = -Infinity;
+      audioProps.monoSynthChannel.volume.value = -Infinity;
+      setPolySynthSolo(true);
+      setDrumsSolo(false);
+      setMonoSynthSolo(false);
+    } else if (polySynthSolo) {
+      if (!drumsMute) {
+        audioProps.drumsMasterChannel.volume.value = 0;
+      }
+      if (!monoSynthMute) {
+        audioProps.monoSynthChannel.volume.value = -12;
+      }
+      setPolySynthSolo(false);
+    }
+  }
+
+  function handleMonoSynthSolo() {
+    if (!monoSynthSolo) {
+      if (monoSynthMute) {
+        handleMonoSynthMute();
+      }
+      audioProps.monoSynthChannel.volume.value = -12;
+      audioProps.drumsMasterChannel.volume.value = -Infinity;
+      audioProps.polySynthChannel.volume.value = -Infinity;
+      setMonoSynthSolo(true);
+      setDrumsSolo(false);
+      setPolySynthSolo(false);
+    } else if (monoSynthSolo) {
+      if (!drumsMute) {
+        audioProps.drumsMasterChannel.volume.value = 0;
+      }
+      if (!polySynthMute) {
+        audioProps.polySynthChannel.volume.value = -15;
+      }
+      setMonoSynthSolo(false);
+    }
+  }
+
   return (
     <>
       <div
@@ -232,6 +348,10 @@ const Sequencer = () => {
           pattern={pattern}
           updatePattern={updatePattern}
           clicked={clicked}
+          drumsMute={drumsMute}
+          handleDrumsMute={handleDrumsMute}
+          drumsSolo={drumsSolo}
+          handleDrumsSolo={handleDrumsSolo}
         />
         <br />
         <PolySynthRows
@@ -240,9 +360,18 @@ const Sequencer = () => {
           updatePolySynthPattern={updatePolySynthPattern}
           clicked={clicked}
           polySynthMode={polySynthMode}
+          polySynthMute={polySynthMute}
+          handlePolySynthMute={handlePolySynthMute}
           handlePolySynthMode={handlePolySynthMode}
+          polySynthSolo={polySynthSolo}
+          handlePolySynthSolo={handlePolySynthSolo}
         />
-        {/* <Visualizer /> */}
+        <MonoSynthRows
+          monoSynthMute={monoSynthMute}
+          handleMonoSynthMute={handleMonoSynthMute}
+          monoSynthSolo={monoSynthSolo}
+          handleMonoSynthSolo={handleMonoSynthSolo}
+        />
       </div>
     </>
   );
