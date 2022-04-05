@@ -2,11 +2,10 @@ import "./Sequencer.css";
 import React, { useState, useEffect, useRef } from "react";
 import * as Tone from "tone";
 import * as d3 from "d3-random";
-import Square from "../Square/Square";
-import Visualizer from "../Visualizer/Visualizer";
 import DrumRows from "../DrumRows/DrumRows";
 import Toolbar from "../Toolbar/Toolbar";
 import PolySynthRows from "../PolySynthRows.js/PolySynthRows";
+import MonoSynthRows from "../MonoSynthRows.js/MonoSynthRows";
 import audioProps from "../audioProps";
 
 Tone.Destination.volume.value = -6;
@@ -242,7 +241,7 @@ const Sequencer = () => {
           polySynthMode={polySynthMode}
           handlePolySynthMode={handlePolySynthMode}
         />
-        {/* <Visualizer /> */}
+        <MonoSynthRows />
       </div>
     </>
   );

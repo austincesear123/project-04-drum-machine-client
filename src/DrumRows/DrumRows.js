@@ -8,6 +8,7 @@ const drumMap = ["Kick", "Snare", "HiHat", "Pluck"];
 const DrumRows = ({ activeColumn, pattern, updatePattern, clicked }) => {
   return (
     <div className="drum-container">
+      <div className="drum-title">Drum Machine</div>
       {pattern.map((row, y) => {
         return (
           <React.Fragment key={y}>
