@@ -26,6 +26,7 @@ const Sequencer = () => {
   const [repeatID, setRepeatID] = useState(0);
   const [drumsMute, setDrumsMute] = useState(false);
   const [polySynthMute, setPolySynthMute] = useState(false);
+  const [monoSynthMute, setMonoSynthMute] = useState(false);
 
   useEffect(
     () => {
@@ -231,6 +232,16 @@ const Sequencer = () => {
     }
   }
 
+  function handleMonoSynthMute() {
+    if (!monoSynthMute) {
+      audioProps.monoSynthChannel.volume.value = -Infinity;
+      setMonoSynthMute(true);
+    } else if (monoSynthMute) {
+      audioProps.monoSynthChannel.volume.value = -12;
+      setMonoSynthMute(false);
+    }
+  }
+
   return (
     <>
       <div
@@ -267,7 +278,10 @@ const Sequencer = () => {
           handlePolySynthMute={handlePolySynthMute}
           handlePolySynthMode={handlePolySynthMode}
         />
-        <MonoSynthRows />
+        <MonoSynthRows
+          monoSynthMute={monoSynthMute}
+          handleMonoSynthMute={handleMonoSynthMute}
+        />
       </div>
     </>
   );

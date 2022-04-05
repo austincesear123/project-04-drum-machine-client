@@ -1,3 +1,17 @@
 .monosynth-container {
     margin-top: 30px;
 }
+
+.monosynth-toolbar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.monosynth-title {
+    margin: 0 20px;
+}
+
+.monosynth-buttons {
+    margin: 0 20px;
+}

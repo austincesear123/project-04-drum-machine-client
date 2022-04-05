@@ -97,8 +97,8 @@ const initialMonoSynthPattern = [
   //   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
 ];
 
-const filter = new Tone.Filter().toDestination();
-const monoSynthChannel = new Tone.Channel(-12).connect(filter);
+const monoSynthChannel = new Tone.Channel(-12).toDestination();
+const filter = new Tone.Filter().connect(monoSynthChannel);
 const monoSynth = new Tone.MonoSynth({
   envelope: {
     attack: 0.01,
@@ -106,7 +106,7 @@ const monoSynth = new Tone.MonoSynth({
     sustain: 0,
     release: 0.01,
   },
-}).connect(monoSynthChannel);
+}).connect(filter);
 // monoSynth.volume.value = -9;
 const lfo = new Tone.LFO("2m", 100, 4000).start().connect(filter.frequency);
 
@@ -122,7 +122,8 @@ const audioProps = {
   polySynth,
   monoSynth,
   drumsMasterChannel,
-  polySynthChannel
+  polySynthChannel,
+  monoSynthChannel
 };
 
 export default audioProps;
