@@ -23,6 +23,7 @@ const Square = ({
   }
 
   if (value) {
+    squareClass.push("crossed ");
     if (instrument === "Kick") {
       squareClass.push("kick-active ");
     } else if (instrument === "Snare") {
@@ -45,7 +46,6 @@ const Square = ({
       } else if (note === "A4") {
         squareClass.push("polysynth-a4 ");
       }
-      squareClass.push("polysynth-active ");
     }
   }
   if (active) {

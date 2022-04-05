@@ -12,62 +12,81 @@
 }
 
 .one-beat {
-  background: #e0e0e0;
+  background-color: #e0e0e0;
   opacity: 0.3;
 }
 
+.crossed {
+  background: linear-gradient(
+      to top left,
+      rgba(0, 0, 0, 0) 0%,
+      rgba(0, 0, 0, 0) calc(50% - 0.8px),
+      rgb(238, 238, 238) 50%,
+      rgba(0, 0, 0, 0) calc(50% + 0.8px),
+      rgba(0, 0, 0, 0) 100%
+    ),
+    linear-gradient(
+      to top right,
+      rgba(0, 0, 0, 0) 0%,
+      rgba(0, 0, 0, 0) calc(50% - 0.8px),
+      rgb(238, 238, 238) 50%,
+      rgba(0, 0, 0, 0) calc(50% + 0.8px),
+      rgba(0, 0, 0, 0) 100%
+    );
+}
+
 .kick-active {
-  background: #10ac51;
+  background-color: #10ac51;
   opacity: 0.5;
 }
 
 .snare-active {
-  background: #1ada6a;
+  background-color: #1ada6a;
   opacity: 0.5;
 }
 
 .hihat-active {
-  background: #56e993;
+  background-color: #56e993;
   opacity: 0.5;
 }
 
 .pluck-active {
-  background: #87fdb8;
+  background-color: #87fdb8;
   opacity: 0.5;
 }
 
 .polysynth-a3 {
-  background: #f200ff;
+  background-color: #f200ff;
   opacity: 0.5;
 }
 
 .polysynth-c4 {
-  background: #AE2AB5;
+  background-color: #ae2ab5;
   opacity: 0.5;
 }
 
 .polysynth-d4 {
-  background: #D41DDE;
+  background-color: #d41dde;
   opacity: 0.5;
 }
 
 .polysynth-e4 {
-  background: #800087;
+  background-color: #800087;
   opacity: 0.5;
 }
 
 .polysynth-g4 {
-  background: #921599;
+  background-color: #921599;
   opacity: 0.5;
 }
 
 .polysynth-a4 {
-  background: #f200ff;
+  background-color: #f200ff;
   opacity: 0.5;
 }
 
 .timeline-active {
   border: 1px solid #999;
-  background: #5b625e;
+  background-color: #5b625e;
   opacity: 0.33;
 }
