@@ -11,6 +11,14 @@
   align-items: center;
 }
 
+.drum-title {
+  margin: 0 20px;
+}
+
+.drum-buttons {
+  margin: 0 20px;
+}
+
 .drum-label {
   grid-column: 1 / 2;
   text-align: end;

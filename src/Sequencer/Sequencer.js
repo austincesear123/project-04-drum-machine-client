@@ -25,6 +25,7 @@ const Sequencer = () => {
   const [polySynthMode, setPolySynthMode] = useState("Randomize");
   const [repeatID, setRepeatID] = useState(0);
   const [drumsMute, setDrumsMute] = useState(false);
+  const [polySynthMute, setPolySynthMute] = useState(false);
 
   useEffect(
     () => {
@@ -213,12 +214,20 @@ const Sequencer = () => {
   function handleDrumsMute() {
     if (!drumsMute) {
       audioProps.drumsMasterChannel.volume.value = -Infinity;
-      console.log(audioProps.drumsMasterChannel.volume.value);
       setDrumsMute(true);
     } else if (drumsMute) {
       audioProps.drumsMasterChannel.volume.value = 0;
-      console.log(audioProps.drumsMasterChannel.volume.value);
       setDrumsMute(false);
+    }
+  }
+
+  function handlePolySynthMute() {
+    if (!polySynthMute) {
+      audioProps.polySynthChannel.volume.value = -Infinity;
+      setPolySynthMute(true);
+    } else if (polySynthMute) {
+      audioProps.polySynthChannel.volume.value = -15;
+      setPolySynthMute(false);
     }
   }
 
@@ -244,6 +253,7 @@ const Sequencer = () => {
           pattern={pattern}
           updatePattern={updatePattern}
           clicked={clicked}
+          drumsMute={drumsMute}
           handleDrumsMute={handleDrumsMute}
         />
         <br />
@@ -253,6 +263,8 @@ const Sequencer = () => {
           updatePolySynthPattern={updatePolySynthPattern}
           clicked={clicked}
           polySynthMode={polySynthMode}
+          polySynthMute={polySynthMute}
+          handlePolySynthMute={handlePolySynthMute}
           handlePolySynthMode={handlePolySynthMode}
         />
         <MonoSynthRows />

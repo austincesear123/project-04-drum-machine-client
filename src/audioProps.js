@@ -122,6 +122,7 @@ const audioProps = {
   polySynth,
   monoSynth,
   drumsMasterChannel,
+  polySynthChannel
 };
 
 export default audioProps;

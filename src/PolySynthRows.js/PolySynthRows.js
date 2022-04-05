@@ -12,11 +12,25 @@ const PolySynthRows = ({
   updatePolySynthPattern,
   polySynthMode,
   handlePolySynthMode,
+  polySynthMute,
+  handlePolySynthMute,
 }) => {
   return (
     <div className="polysynth-container">
       <div className="polysynth-toolbar">
         <div className="polysynth-title">Polysynth</div>
+        <div className="polysynth-buttons">
+          <button
+            className={
+              polySynthMute
+                ? "btn btn-danger btn-sm"
+                : "btn btn-secondary btn-sm"
+            }
+            onClick={handlePolySynthMute}
+          >
+            Mute
+          </button>
+        </div>
         <div className="polysynth-select">
           Sequencer Mode:
           <select
