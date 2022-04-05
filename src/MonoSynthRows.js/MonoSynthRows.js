@@ -1,7 +1,12 @@
 import "./MonoSynthRows.css";
 import Visualizer from "../Visualizer/Visualizer";
 
-const MonoSynthRows = ({ monoSynthMute, handleMonoSynthMute }) => {
+const MonoSynthRows = ({
+  monoSynthMute,
+  handleMonoSynthMute,
+  monoSynthSolo,
+  handleMonoSynthSolo,
+}) => {
   return (
     <div className="monosynth-container">
       <div className="monosynth-toolbar">
@@ -16,6 +21,16 @@ const MonoSynthRows = ({ monoSynthMute, handleMonoSynthMute }) => {
             onClick={handleMonoSynthMute}
           >
             Mute
+          </button>
+          <button
+            className={
+              monoSynthSolo
+                ? "btn btn-primary btn-sm"
+                : "btn btn-secondary btn-sm"
+            }
+            onClick={handleMonoSynthSolo}
+          >
+            Solo
           </button>
         </div>
       </div>

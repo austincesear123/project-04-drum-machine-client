@@ -14,6 +14,8 @@ const PolySynthRows = ({
   handlePolySynthMode,
   polySynthMute,
   handlePolySynthMute,
+  polySynthSolo,
+  handlePolySynthSolo,
 }) => {
   return (
     <div className="polysynth-container">
@@ -29,6 +31,16 @@ const PolySynthRows = ({
             onClick={handlePolySynthMute}
           >
             Mute
+          </button>
+          <button
+            className={
+              polySynthSolo
+                ? "btn btn-primary btn-sm"
+                : "btn btn-secondary btn-sm"
+            }
+            onClick={handlePolySynthSolo}
+          >
+            Solo
           </button>
         </div>
         <div className="polysynth-select">

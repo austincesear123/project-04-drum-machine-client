@@ -28,6 +28,8 @@ const Sequencer = () => {
   const [polySynthMute, setPolySynthMute] = useState(false);
   const [monoSynthMute, setMonoSynthMute] = useState(false);
   const [drumsSolo, setDrumsSolo] = useState(false);
+  const [polySynthSolo, setPolySynthSolo] = useState(false);
+  const [monoSynthSolo, setMonoSynthSolo] = useState(false);
 
   useEffect(
     () => {
@@ -215,43 +217,112 @@ const Sequencer = () => {
 
   function handleDrumsMute() {
     if (!drumsMute) {
+      if (drumsSolo) {
+        handleDrumsSolo();
+      }
       audioProps.drumsMasterChannel.volume.value = -Infinity;
       setDrumsMute(true);
     } else if (drumsMute) {
-      audioProps.drumsMasterChannel.volume.value = 0;
+      if (!polySynthSolo && !monoSynthSolo) {
+        audioProps.drumsMasterChannel.volume.value = 0;
+      }
       setDrumsMute(false);
     }
   }
 
   function handlePolySynthMute() {
     if (!polySynthMute) {
+      if (polySynthSolo) {
+        handlePolySynthSolo();
+      }
       audioProps.polySynthChannel.volume.value = -Infinity;
       setPolySynthMute(true);
     } else if (polySynthMute) {
-      audioProps.polySynthChannel.volume.value = -15;
+      if (!drumsSolo && !monoSynthSolo) {
+        audioProps.polySynthChannel.volume.value = -15;
+      }
       setPolySynthMute(false);
     }
   }
 
   function handleMonoSynthMute() {
     if (!monoSynthMute) {
+      if (monoSynthSolo) {
+        handleMonoSynthSolo();
+      }
       audioProps.monoSynthChannel.volume.value = -Infinity;
       setMonoSynthMute(true);
     } else if (monoSynthMute) {
-      audioProps.monoSynthChannel.volume.value = -12;
+      if (!drumsSolo && !polySynthSolo) {
+        audioProps.monoSynthChannel.volume.value = -12;
+      }
       setMonoSynthMute(false);
     }
   }
 
   function handleDrumsSolo() {
     if (!drumsSolo) {
+      if (drumsMute) {
+        handleDrumsMute();
+      }
+      audioProps.drumsMasterChannel.volume.value = 0;
       audioProps.polySynthChannel.volume.value = -Infinity;
       audioProps.monoSynthChannel.volume.value = -Infinity;
       setDrumsSolo(true);
+      setPolySynthSolo(false);
+      setMonoSynthSolo(false);
     } else if (drumsSolo) {
-      audioProps.polySynthChannel.volume.value = -15;
-      audioProps.monoSynthChannel.volume.value = -12;
+      if (!polySynthMute) {
+        audioProps.polySynthChannel.volume.value = -15;
+      }
+      if (!monoSynthMute) {
+        audioProps.monoSynthChannel.volume.value = -12;
+      }
       setDrumsSolo(false);
+    }
+  }
+
+  function handlePolySynthSolo() {
+    if (!polySynthSolo) {
+      if (polySynthMute) {
+        handlePolySynthMute();
+      }
+      audioProps.polySynthChannel.volume.value = -15;
+      audioProps.drumsMasterChannel.volume.value = -Infinity;
+      audioProps.monoSynthChannel.volume.value = -Infinity;
+      setPolySynthSolo(true);
+      setDrumsSolo(false);
+      setMonoSynthSolo(false);
+    } else if (polySynthSolo) {
+      if (!drumsMute) {
+        audioProps.drumsMasterChannel.volume.value = 0;
+      }
+      if (!monoSynthMute) {
+        audioProps.monoSynthChannel.volume.value = -12;
+      }
+      setPolySynthSolo(false);
+    }
+  }
+
+  function handleMonoSynthSolo() {
+    if (!monoSynthSolo) {
+      if (monoSynthMute) {
+        handleMonoSynthMute();
+      }
+      audioProps.monoSynthChannel.volume.value = -12;
+      audioProps.drumsMasterChannel.volume.value = -Infinity;
+      audioProps.polySynthChannel.volume.value = -Infinity;
+      setMonoSynthSolo(true);
+      setDrumsSolo(false);
+      setPolySynthSolo(false);
+    } else if (monoSynthSolo) {
+      if (!drumsMute) {
+        audioProps.drumsMasterChannel.volume.value = 0;
+      }
+      if (!polySynthMute) {
+        audioProps.polySynthChannel.volume.value = -15;
+      }
+      setMonoSynthSolo(false);
     }
   }
 
@@ -292,10 +363,14 @@ const Sequencer = () => {
           polySynthMute={polySynthMute}
           handlePolySynthMute={handlePolySynthMute}
           handlePolySynthMode={handlePolySynthMode}
+          polySynthSolo={polySynthSolo}
+          handlePolySynthSolo={handlePolySynthSolo}
         />
         <MonoSynthRows
           monoSynthMute={monoSynthMute}
           handleMonoSynthMute={handleMonoSynthMute}
+          monoSynthSolo={monoSynthSolo}
+          handleMonoSynthSolo={handleMonoSynthSolo}
         />
       </div>
     </>
