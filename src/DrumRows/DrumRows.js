@@ -12,6 +12,8 @@ const DrumRows = ({
   clicked,
   handleDrumsMute,
   drumsMute,
+  drumsSolo,
+  handleDrumsSolo
 }) => {
   return (
     <div className="drum-container">
@@ -25,6 +27,14 @@ const DrumRows = ({
             onClick={handleDrumsMute}
           >
             Mute
+          </button>
+          <button
+            className={
+              drumsSolo ? "btn btn-primary btn-sm" : "btn btn-secondary btn-sm"
+            }
+            onClick={handleDrumsSolo}
+          >
+            Solo
           </button>
         </div>
       </div>

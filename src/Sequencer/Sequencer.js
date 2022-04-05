@@ -27,6 +27,7 @@ const Sequencer = () => {
   const [drumsMute, setDrumsMute] = useState(false);
   const [polySynthMute, setPolySynthMute] = useState(false);
   const [monoSynthMute, setMonoSynthMute] = useState(false);
+  const [drumsSolo, setDrumsSolo] = useState(false);
 
   useEffect(
     () => {
@@ -84,8 +85,8 @@ const Sequencer = () => {
         for (let x = 0; x < row.length; x++) {
           row[x] = Math.abs(d3.randomNormal()()) > chance ? 1 : 0;
         }
-        // Loop through again and make sure we don't have two
-        // consectutive on values (it sounds bad)
+        // Loop through again and make sure there's no two
+        // consectutive on values
         for (let x = 0; x < row.length - 1; x++) {
           if (row[x] === 1 && row[x + 1] === 1) {
             row[x + 1] = 0;
@@ -242,6 +243,18 @@ const Sequencer = () => {
     }
   }
 
+  function handleDrumsSolo() {
+    if (!drumsSolo) {
+      audioProps.polySynthChannel.volume.value = -Infinity;
+      audioProps.monoSynthChannel.volume.value = -Infinity;
+      setDrumsSolo(true);
+    } else if (drumsSolo) {
+      audioProps.polySynthChannel.volume.value = -15;
+      audioProps.monoSynthChannel.volume.value = -12;
+      setDrumsSolo(false);
+    }
+  }
+
   return (
     <>
       <div
@@ -266,6 +279,8 @@ const Sequencer = () => {
           clicked={clicked}
           drumsMute={drumsMute}
           handleDrumsMute={handleDrumsMute}
+          drumsSolo={drumsSolo}
+          handleDrumsSolo={handleDrumsSolo}
         />
         <br />
         <PolySynthRows
