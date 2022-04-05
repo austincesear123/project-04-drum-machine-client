@@ -11,10 +11,12 @@ const initialPattern = [
   //   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
 ];
 
-const bassSynth = new Tone.MembraneSynth().toDestination();
+const drumsMasterChannel = new Tone.Channel().toDestination();
+
+const bassSynth = new Tone.MembraneSynth().connect(drumsMasterChannel);
 // bassSynth.volume.value = -6;
 
-const dist = new Tone.Distortion(0.2).toDestination();
+const dist = new Tone.Distortion(0.2).connect(drumsMasterChannel);
 const snareChannel = new Tone.Channel(-11).connect(dist);
 const snareSynth = new Tone.NoiseSynth({
   // volume: -11,
@@ -42,7 +44,7 @@ const hiHatSynth = new Tone.MetalSynth({
 }).connect(hiHatChannel);
 // hiHatSynth.volume.value = -6;
 
-const pluckSynthChannel = new Tone.Channel(0, 0.25).toDestination()
+const pluckSynthChannel = new Tone.Channel(0, 0.25).connect(drumsMasterChannel);
 const pluckSynth = new Tone.PluckSynth().connect(pluckSynthChannel);
 // pluckSynth.volume.value = -6;
 
@@ -96,7 +98,7 @@ const initialMonoSynthPattern = [
 ];
 
 const filter = new Tone.Filter().toDestination();
-const monoSynthChannel = new Tone.Channel(-12).connect(filter)
+const monoSynthChannel = new Tone.Channel(-12).connect(filter);
 const monoSynth = new Tone.MonoSynth({
   envelope: {
     attack: 0.01,
@@ -119,6 +121,7 @@ const audioProps = {
   notes,
   polySynth,
   monoSynth,
+  drumsMasterChannel,
 };
 
 export default audioProps;

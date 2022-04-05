@@ -24,6 +24,7 @@ const Sequencer = () => {
   const [bpm, setBPM] = useState(Tone.Transport.bpm.value);
   const [polySynthMode, setPolySynthMode] = useState("Randomize");
   const [repeatID, setRepeatID] = useState(0);
+  const [drumsMute, setDrumsMute] = useState(false);
 
   useEffect(
     () => {
@@ -209,6 +210,18 @@ const Sequencer = () => {
     setPolySynthMode(event.target.value);
   }
 
+  function handleDrumsMute() {
+    if (!drumsMute) {
+      audioProps.drumsMasterChannel.volume.value = -Infinity;
+      console.log(audioProps.drumsMasterChannel.volume.value);
+      setDrumsMute(true);
+    } else if (drumsMute) {
+      audioProps.drumsMasterChannel.volume.value = 0;
+      console.log(audioProps.drumsMasterChannel.volume.value);
+      setDrumsMute(false);
+    }
+  }
+
   return (
     <>
       <div
@@ -231,6 +244,7 @@ const Sequencer = () => {
           pattern={pattern}
           updatePattern={updatePattern}
           clicked={clicked}
+          handleDrumsMute={handleDrumsMute}
         />
         <br />
         <PolySynthRows
